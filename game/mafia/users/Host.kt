@@ -1,6 +1,6 @@
 package game.mafia.users
 
-class Host : Player() {
+class Host(base: Player) : Player(base.position, base.id) {
 
     fun startGame () {
         println("game started...")

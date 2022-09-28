@@ -1,5 +1,5 @@
 package game.mafia.roles
 
-interface Role {
+interface ActiveRole {
     fun utilityUse() {}
 }

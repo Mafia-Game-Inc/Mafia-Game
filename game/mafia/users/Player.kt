@@ -1,11 +1,8 @@
 package game.mafia.users
 
-import game.mafia.roles.Role
+import game.mafia.roles.ActiveRole
 
-open class Player {
-    var role: Role? = null
-    var position: Int = -1
-    var id: Int = -1
+open class Player(var position: Int, var id: Int) {
 
 
     fun joinLobby (lobbyId: Int) {

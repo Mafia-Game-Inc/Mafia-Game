@@ -1,36 +1,46 @@
 package game.mafia
 
+import game.mafia.roles.ActiveRole
 import game.mafia.users.Player
 
-import game.mafia.roles.classic.*
+/*
+* возможно решить проблему с ролями получиться
+* тем что в пекедже ролей с нужных касах прописывать статические методы
+* куда просто передовать объект игрока и выполнять для него типичные опирации*/
 
 class Mafia {
-    // можно выделить в одельный клас лобби
+    // информация о лобби
     var lobbyId: Int = -1
     var lobbyName: String = "NONE"
 
-    var players: MutableList<Player> = mutableListOf()
+    // информация об участниках
+    var players: MutableList<Player> = mutableListOf() // из ссылки плеер нельзя вызывать метод мафии
+    var ative: MutableList<ActiveRole> = mutableListOf() // зачем нужен дублирующий массив только для того
+    // чтобы вызвать один метод
 
     fun gameLoop () {
-        // game...
+        giveRoles() // здесь стоит не только раздать роли но и познакомить мафию!
+
+        while(checkRules()) {
+            runDay()
+            if (checkRules()) break
+            runNight()
+        }
     }
 
+    fun runDay() {
+    }
+
+    fun runNight() {}
+
+    fun checkRules() : Boolean {
+        return false;
+    }
+
+
     fun giveRoles () {
-
-        // скорее здесь нужен простой фабричный метод
-
-        // решить проблему с тем что не понятно какую фабрику создавать и как именно
-        // паттрен работает в итоге с клиентом
-
-        // скорее всего даже этой фабрики не надо
-        // а какую-то функцию которая относительно конфигурации и кол. игроков будет
-        // выдавать массив(или что-то другое) с ролями
-
-        // правда нужно подумать ка потом рандомно выдавать роли
-        // тип если их сначала копировать а потом давать игрокам, звучит так себе
     }
 
     fun createPreSet (preSet: PreSet, amountOfplayers: Int) : List<List<Role>> {
-        // как-то отностельно пресета генерить все нужные инстансы
     }
 }

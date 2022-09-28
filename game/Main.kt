@@ -1,5 +1,7 @@
 package game
 
+import kotlin.reflect.typeOf
+
 interface A {
     fun a () {
     }
@@ -14,8 +16,12 @@ class B : A {
     }
 }
  fun main(args: Array<String>) {
+
+
     var a : A = B()
 
      a.a()
+     a = a as B;
+
      a.b()
  }
