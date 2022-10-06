@@ -1,9 +1,14 @@
 package game.mafia.users
 
-import game.mafia.roles.ActiveRole
+import game.mafia.roles.Roles
 
-open class Player(var position: Int, var id: Int) {
-
+open class Player(
+    var position: Int,
+    var id: Int,
+    var role: Roles,
+    var state: UserState
+    )
+{
 
     fun joinLobby (lobbyId: Int) {
         println("player $id joined lobby $lobbyId")
@@ -30,10 +35,3 @@ open class Player(var position: Int, var id: Int) {
         println("player number $position is exposing...")
     }
 }
-
-// первый вариант прописывать все обычные методы в плеере либо
-// прописать отдельный класс типа Base или мирный от которого будут наследоваться
-// классы активных ролей
-
-// надо подумать являеться ли плеер и хост частями логики модели
-// и нужно ли в самой модельке прописывать эти методы типа создать лобби и тд.
