@@ -16,13 +16,15 @@ class Mafia(val lobby: Lobby) {
 
     fun runDay() {}
 
-    fun runNight() {}
-
-    fun checkRules() : Boolean {}
+    fun runNight() {
 
 
-    fun giveRoles () {}
+    }
+
+    fun checkRules() {}
 
     // нужно будет подумать как относительно настроек выдавать роли
-    fun createPreSet (preSet: PreSet, amountOfplayers: Int) : List<List<Role>> {}
+    fun giveRoles () {}
+
+
 }

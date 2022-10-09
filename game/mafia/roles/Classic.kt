@@ -2,6 +2,12 @@ package game.mafia.roles
 
 import game.mafia.users.Player
 
+class ClassicPreSet: PreSet {
+    override fun runNight(players: HashMap<Roles, Player>) {
+
+    }
+}
+
 fun kill(player: Player) {
     TODO("Write logic of killing")
 }
