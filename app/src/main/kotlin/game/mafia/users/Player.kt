@@ -10,11 +10,18 @@ open class Player(
     )
 {
 
-    fun joinLobby (lobbyId: Int) {
+    fun joinGame (gameId: Int) {
+
+        /*
+        * input validation
+        * */
+
+        "some_collection"[gameId].lobby.addPlayer(this)
+
         println("player $id joined lobby $lobbyId")
     }
 
-    fun createLobby (lobbyName: String) {
+    fun createGame (lobbyName: String) {
         println("player $id joined lobby $lobbyName")
     }
 
@@ -23,7 +30,7 @@ open class Player(
         println("player number $position is voting...")
     }
 
-    fun say () {
+    fun say (time: UInt) {
         println("player number $position is saying...")
     }
 
