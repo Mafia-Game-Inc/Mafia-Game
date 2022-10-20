@@ -6,14 +6,8 @@ class ClassicPreSet (val mafAmount: Int): PreSet {
     override fun runNight(players: HashMap<Roles, Player>) {}
 }
 
-fun kill(player: Player) {
-    TODO("Write logic of killing")
-}
+fun kill(player: Player) {}
 
-fun checkForCom(player: Player) {
-    TODO("Write logic of checking for com")
-}
+fun checkForCom(player: Player) {}
 
-fun checkForMafia(player: Player) {
-    TODO("Write logic of checking for mafia")
-}
+fun checkForMafia(player: Player) {}

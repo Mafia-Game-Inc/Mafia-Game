@@ -9,19 +9,18 @@ class Mafia(
 ) {
 
     fun runMafia() {
-        giveRoles()
+        /*giveRoles()
 
         while(checkRules()) {
             runDay()
             if (checkRules()) break
             preSet.runNight()
-        }
+        }*/
     }
 
     fun runDay() {}
 
     fun checkRules():Boolean {}
 
-    // нужно будет подумать как относительно настроек выдавать роли
     fun giveRoles() {}
 }

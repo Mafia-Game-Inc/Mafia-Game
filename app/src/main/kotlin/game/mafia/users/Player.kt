@@ -1,8 +1,10 @@
 package game.mafia.users
 
 import game.mafia.roles.Roles
+import javax.annotation.meta.TypeQualifierNickname
 
 open class Player(
+    var nickname: String,
     var position: Int,
     var id: Int,
     var role: Roles,
@@ -14,11 +16,10 @@ open class Player(
 
         /*
         * input validation
+        * "some_collection"[gameId].lobby.addPlayer(this)
+        *
+        * println("player $id joined lobby $lobbyId")
         * */
-
-        "some_collection"[gameId].lobby.addPlayer(this)
-
-        println("player $id joined lobby $lobbyId")
     }
 
     fun createGame (lobbyName: String) {
