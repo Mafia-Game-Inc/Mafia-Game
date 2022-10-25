@@ -1,16 +1,31 @@
 package game.mafia.users
 
 import game.mafia.roles.Roles
-import javax.annotation.meta.TypeQualifierNickname
+import kotlin.random.Random
+import kotlin.random.nextUInt
 
-open class Player(
-    var nickname: String,
-    var position: Int,
-    var id: Int,
-    var role: Roles,
-    var state: UserState
-    )
-{
+open class Player {
+    var nickname: String = ""
+        set(value) {
+            //nickname validation
+            field = value
+        }
+    protected var id: UInt = Random.nextUInt()
+    var position: Int = -1
+    var role: Roles = Roles.NONE
+    var state: UserState = UserState.NOT_IN_GAME
+
+    constructor(nickname: String) {
+        this.nickname = nickname
+    }
+
+    constructor(clone: Player){
+        nickname = clone.nickname
+        id = clone.id
+        position = clone.position
+        role = clone.role
+        state = clone.state
+    }
 
     fun joinGame (gameId: Int) {
 
