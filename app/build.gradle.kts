@@ -35,6 +35,8 @@ dependencies {
     // Use the Kotlin JUnit integration.
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
 }
 
 tasks.test {
