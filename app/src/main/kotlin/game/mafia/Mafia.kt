@@ -7,6 +7,11 @@ import game.mafia.users.Player
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
+/*
+* implement interruption of game loop
+* so game can be paused
+*/
+
 class Mafia(lobbyName: String, moderator: Player) {
 
     val gameId: UInt = Random.nextUInt()
@@ -18,13 +23,13 @@ class Mafia(lobbyName: String, moderator: Player) {
     }
 
     fun runMafia() {
-        /*giveRoles()
+        giveRoles()
 
         while(checkRules()) {
             runDay()
             if (checkRules()) break
             preSet.runNight()
-        }*/
+        }
     }
 
     fun runDay() {}
