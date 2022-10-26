@@ -9,7 +9,7 @@ class ClassicPreSet: PreSet {
 
     override fun configure(players: Int) {}
 
-    override fun runNight(players: HashMap<Roles, Player>) {}
+    override fun runNight(players: Array<Player>) {}
 }
 
 fun kill(player: Player) {

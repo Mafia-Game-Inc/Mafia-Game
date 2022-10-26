@@ -15,7 +15,6 @@ class Lobby(
             field = value
         }
     var players: MutableList<Player> = mutableListOf()
-
     init {
         this.lobbyName = lobbyName
     }
