@@ -1,7 +1,6 @@
 package game.mafia
 
-import game.mafia.users.Host
-import game.mafia.users.Player
+import game.mafia.users.*
 
 class Lobby(
     lobbyName: String,

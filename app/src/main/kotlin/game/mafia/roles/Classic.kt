@@ -1,7 +1,6 @@
 package game.mafia.roles
 
-import game.mafia.users.Player
-import game.mafia.users.UserState
+import game.mafia.users.*
 
 class ClassicPreSet: PreSet {
     val activeRolesAmount = 3

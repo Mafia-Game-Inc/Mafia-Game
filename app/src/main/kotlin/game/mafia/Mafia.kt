@@ -1,9 +1,8 @@
 package game.mafia
 
-import game.mafia.roles.ClassicPreSet
-import game.mafia.roles.PreSet
-import game.mafia.users.Host
-import game.mafia.users.Player
+import game.mafia.roles.*
+import game.mafia.users.*
+
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
