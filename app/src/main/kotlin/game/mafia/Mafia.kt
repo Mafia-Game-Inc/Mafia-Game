@@ -11,15 +11,52 @@ import kotlin.random.nextUInt
 * so game can be paused
 */
 
-class Mafia(lobbyName: String, moderator: Player) {
+const val TIME_FOR_SPEECH = 60u
+const val TIME_FOR_DEFENSE = 30u
 
+class Mafia(var gameName: String) {
     val gameId: UInt = Random.nextUInt()
-    val lobby: Lobby
-    var preSet: PreSet = ClassicPreSet()
+    var players = mutableListOf<Player>()
+    var preSet: ClassicPreSet = ClassicPreSet()
 
-    init {
-        lobby = Lobby(lobbyName, Host(moderator))
+
+    fun startGame() {
+        if (players.size < 9) {
+            print("Can't start game. There must be 10 players")
+            return
+        }
+
+        runMafia()
     }
+
+    fun pauseGame() {}
+
+    fun addPlayer(player: Player) {
+        if (this.players.size >= 9) {
+            player.state = UserState.SPECTATOR
+        } else {
+            player.state = UserState.ALIVE
+        }
+
+        val playerPos = readln().toUInt()
+        //check if this position is not already busy
+        player.position = playerPos
+
+        players.add(player)
+    }
+
+    fun kickPlayer(player: Player) {
+        player.toDefaultState()
+        players.remove(player)
+    }
+
+    fun kickPlayer(playerPos: UInt) {
+        val player = players.find { it.position == playerPos }
+
+        player?.toDefaultState()
+        players.remove(player)
+    }
+
 
     fun runMafia() {
         giveRoles()
@@ -27,13 +64,65 @@ class Mafia(lobbyName: String, moderator: Player) {
         while(checkRules()) {
             runDay()
             if (checkRules()) break
-            preSet.runNight()
+            preSet.runNight(players)
+        }
+
+        if (this.preSet.blackPlayers == 0) {
+            println("Red city win!")
+        } else {
+            println("Black city win!")
         }
     }
 
-    fun runDay() {}
+    fun runDay() {
+        val exposedPlayers = mutableListOf<Player>()
+        val votes = MutableList(players.size) { 0u }
+        var exposedPlayer: Player
 
-    fun checkRules():Boolean {}
+        for (player in players) {
+            if (player.state == UserState.ALIVE) {
+                player.say(TIME_FOR_SPEECH)
 
-    fun giveRoles() {}
+                exposedPlayer = player.expose(players)!!
+                exposedPlayers.add(exposedPlayer)
+            }
+        }
+
+        for (player in players) {
+            if (player.state == UserState.ALIVE) {
+                player.say(TIME_FOR_DEFENSE)
+            }
+        }
+
+        for (exposed in exposedPlayers) {
+            for (player in players) {
+                if (player.state == UserState.ALIVE) {
+                    if (player.vote(exposed.position)) votes[exposed.position.toInt() - 1]++
+                }
+            }
+        }
+
+        kickPlayer(votes.indexOf(votes.maxOrNull()).toUInt())
+    }
+
+    fun checkRules():Boolean {
+        return preSet.blackPlayers != preSet.redPlayers
+    }
+
+    fun giveRoles() {
+        players.onEach {
+            it.role = Roles.CITIZEN
+            it.team = Teams.RED
+        }
+
+        for (roles in preSet.activeRoles) {
+            for (i in 1..roles.first) {
+                val playerPos = Random.nextUInt(1u..10u)
+                players.find { it.position == playerPos }?.let {
+                    it.role = roles.second.second
+                    it.team = roles.second.first
+                }
+            }
+        }
+    }
 }

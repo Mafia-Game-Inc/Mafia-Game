@@ -10,6 +10,4 @@ class App {
         }
 }
 
-fun main() {
-    println(App().greeting)
-}
+fun main() {}

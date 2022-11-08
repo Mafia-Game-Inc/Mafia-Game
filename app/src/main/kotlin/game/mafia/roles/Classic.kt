@@ -3,13 +3,20 @@ package game.mafia.roles
 import game.mafia.users.*
 import java.util.*
 
-class ClassicPreSet: PreSet {
-    val activeRolesAmount = 3
-    val activeRoles = listOf<Pair<Int, Roles>>()
+/*
+* 1. захардкоженый вариант просто чтоб работал
+* */
 
-    override fun configure(players: Int) {}
+class ClassicPreSet {
+    var redPlayers = 7
+    var blackPlayers = 3
+    var activeRoles = listOf(
+        Pair(2, Pair(Teams.BLACK, Roles.MAFIA)),
+        Pair(1, Pair(Teams.BLACK, Roles.GODFATHER)),
+        Pair(1, Pair(Teams.RED, Roles.SHERIFF))
+    )
 
-    override fun runNight(players: Array<Player>) {
+    fun runNight(players: MutableList<Player>) {
         for (player in players) {
             if (player.role == Roles.SHERIFF && player.state == UserState.ALIVE) {
                 println("Hey, Sheriff, try to find mafia")
@@ -40,7 +47,7 @@ class ClassicPreSet: PreSet {
         val integer = reader.nextInt()
 
         kill(players[integer - 1])
-        var position = integer - 1
+        val position = integer - 1
         println("Player $position was killed")
     }
 }

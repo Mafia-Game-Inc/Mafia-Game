@@ -3,10 +3,8 @@ package game.mafia.users
 import game.mafia.Mafia
 import game.mafia.roles.Roles
 
-import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 import kotlin.random.nextUInt
-import kotlinx.coroutines.*
 
 /*
 * add time for all commands
@@ -20,44 +18,35 @@ import kotlinx.coroutines.*
 * */
 const val SHOUT_OUT_TIME = 5
 
-open class Player {
-    var nickname: String = ""
-        set(value) {
-            //nickname validation
-            field = value
-        }
-    private var id: UInt = Random.nextUInt()
-    var position: Int = -1
+open class Player(var nickname: String) {
+    val id: UInt = Random.nextUInt()
+    var isHost: Boolean = false
+    var position: UInt = 0u
     var role: Roles = Roles.NONE
+    var team: Teams = Teams.NONE
     var state: UserState = UserState.NOT_IN_GAME
 
-    constructor(nickname: String) {
-        this.nickname = nickname
-    }
-
-    constructor(clone: Player) {
-        nickname = clone.nickname
-        id = clone.id
-        position = clone.position
-        role = clone.role
-        state = clone.state
-    }
-
-    fun joinGame (gameId: Int, games: MutableList<Mafia>) {
+    fun joinGame (gameId: UInt, games: MutableList<Mafia>) {
         //input validation
-        games[gameId].lobby.addPlayer(this)
+        //games[gameId].addPlayer(this)
+
+        games.find { it.gameId == gameId }?.addPlayer(this)
 
         println("player $id joined lobby $gameId")
     }
 
     fun createGame (lobbyName: String, games: MutableList<Mafia>) {
-        games.add(Mafia(lobbyName, this))
+        val game = Mafia(lobbyName)
+
+        this.isHost = true
+        game.addPlayer(this)
+        games.add(game)
 
         println("player $id joined lobby $lobbyName")
     }
 
 
-    fun vote (playerPos: Int): Boolean {
+    fun vote (playerPos: UInt): Boolean {
         if (playerPos == this.position) return false
 
         println("vote for $playerPos? (false/true)")
@@ -68,24 +57,32 @@ open class Player {
         return voteChoice
     }
 
-    suspend fun say (time: UInt) {
+    fun say (time: UInt) { //suspend
         println("player number $position is saying...")
-        delay(TimeUnit.SECONDS.toMillis(time.toLong()))
+//        delay(TimeUnit.SECONDS.toMillis(time.toLong()))
     }
 
-    suspend fun shoutOut () {
+    fun shoutOut () {//suspend
         println("player number $position is shouting out...")
-        delay(TimeUnit.SECONDS.toMillis(SHOUT_OUT_TIME.toLong()))
+//        delay(TimeUnit.SECONDS.toMillis(SHOUT_OUT_TIME.toLong()))
     }
 
-    fun expose (alivePlayers: List<Int>): Int {
+    fun expose (players: MutableList<Player>): Player? { // alivePlayers should be hashmap<pos, Player>
         println("player number $position is exposing...")
 
-        println("choose player from: $alivePlayers")
+        println("choose player from: $players")// should print only positions
 
-        val chosenPlayer = readln().toInt()
-        if (!alivePlayers.contains(chosenPlayer)) println("wrong player!")
+        val chosenPlayerPos = readln().toUInt()
 
-        return chosenPlayer
+        return players.find { it.position == chosenPlayerPos }
+    }
+
+
+    fun toDefaultState () {
+        this.isHost = false
+        this.position = 0u
+        this.role = Roles.NONE
+        this.team = Teams.NONE
+        this.state = UserState.NOT_IN_GAME
     }
 }
