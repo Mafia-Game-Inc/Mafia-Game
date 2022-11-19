@@ -110,17 +110,21 @@ class Mafia(var gameName: String) {
     }
 
     fun giveRoles() {
+        val randomPos = (1u..9u).shuffled().take(preSet.activePlayersAmount)
+        val iterator = randomPos.listIterator()
+
         players.onEach {
             it.role = Roles.CITIZEN
             it.team = Teams.RED
         }
 
-        for (roles in preSet.activeRoles) {
-            for (i in 1..roles.first) {
-                val playerPos = Random.nextUInt(1u..10u)
+        for (roleData in preSet.activeRoles) {
+            for (i in 1..roleData.amount) {
+                val playerPos = iterator.next()
+
                 players.find { it.position == playerPos }?.let {
-                    it.role = roles.second.second
-                    it.team = roles.second.first
+                    it.team = roleData.team
+                    it.role = roleData.role
                 }
             }
         }

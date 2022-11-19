@@ -10,10 +10,11 @@ import java.util.*
 class ClassicPreSet {
     var redPlayers = 7
     var blackPlayers = 3
+    var activePlayersAmount = 4
     var activeRoles = listOf(
-        Pair(2, Pair(Teams.BLACK, Roles.MAFIA)),
-        Pair(1, Pair(Teams.BLACK, Roles.GODFATHER)),
-        Pair(1, Pair(Teams.RED, Roles.SHERIFF))
+        RoleData(2, Teams.BLACK, Roles.MAFIA),
+        RoleData(1, Teams.BLACK, Roles.GODFATHER),
+        RoleData(1, Teams.RED, Roles.SHERIFF)
     )
 
     fun runNight(players: MutableList<Player>) {

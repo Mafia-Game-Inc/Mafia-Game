@@ -3,9 +3,11 @@
  */
 package game
 
+import game.mafia.users.Player
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 
 internal class MyFirstJUnitJupiterTests {
@@ -15,9 +17,9 @@ internal class MyFirstJUnitJupiterTests {
     }
 }
 
-//class AppTest {
-//    @Test fun appHasAGreeting() {
-//        val classUnderTest = App()
-//        assertNotNull(classUnderTest.greeting, "app should have a greeting")
-//    }
-//}
+class AppTest {
+    @Test fun appHasAGreeting() {
+        var player = Player("qwert")
+        assertTrue(!player.isHost, "asd")
+    }
+}
