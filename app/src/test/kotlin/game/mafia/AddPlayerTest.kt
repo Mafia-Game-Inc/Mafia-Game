@@ -13,7 +13,7 @@ internal class AddPlayerTest {
 
         val mafia = Mafia("testExample")
         val testPlayersState = mutableListOf<Player>()
-        val testAlive = 10
+        val testAlive = 9
         val testSpectators = 3
         val playersCount = testAlive + testSpectators
 
@@ -29,6 +29,12 @@ internal class AddPlayerTest {
             }
 
             testPlayersState.add(player) // Не шарю, как добавить в список. Сделал так, как было у Саши М.
+
+            assertEquals(
+                null,
+                player,
+                "Player object is null\n"
+            )
         }
 
         val realAlive = mafia.players.count { it.state = UserState.ALIVE }
