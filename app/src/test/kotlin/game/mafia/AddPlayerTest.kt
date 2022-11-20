@@ -22,7 +22,7 @@ internal class AddPlayerTest {
 
             mafia.add(player)  // Не шарю, как добавить в список. Сделал так, как было у Саши М.
 
-            if (i > 9) {
+            if (i >= 9) {
                 player.state = UserState.SPECTATOR
             } else {
                 player.state = UserState.ALIVE
