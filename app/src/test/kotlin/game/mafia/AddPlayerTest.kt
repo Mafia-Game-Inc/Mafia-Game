@@ -10,17 +10,40 @@ internal class AddPlayerTest {
 
     @Test
     fun addPlayer() {
-        val player = Player("testExample")
-        this.players.size = 10
 
-        mafia.addPlayer(player)
+        val mafia = Mafia("testExample")
+        val testPlayersState = mutableListOf<Player>()
+        val testAlive = 10
+        val testSpectators = 3
+        val playersCount = testAlive + testSpectators
 
-        assertTrue(player.state != UserState.SPECTATOR,
-            () → "Player state incorrect assigned"
+        for (i in 1..playersCount) {
+            val player = Player("TestPlayer #$i")
+
+            mafia.add(player)  // Не шарю, как добавить в список. Сделал так, как было у Саши М.
+
+            if (i > 9) {
+                player.state = UserState.SPECTATOR
+            } else {
+                player.state = UserState.ALIVE
+            }
+
+            testPlayersState.add(player) // Не шарю, как добавить в список. Сделал так, как было у Саши М.
+        }
+
+        val realAlive = mafia.players.count { it.state = UserState.ALIVE }
+        val realSpecs = mafia.players.count { it.state = UserState.SPECTATOR }
+
+        assertEquals(
+            realAlive,
+            testAlive,
+            "Spectator state was incorectly assigned\n"
         )
 
-        assertNull(
-            player.position, "Player position incorrect assigned"
+        assertEquals(
+            realAlive,
+            testAlive,
+            "Alive state was incorectly assigned\n"
         )
 
     }
