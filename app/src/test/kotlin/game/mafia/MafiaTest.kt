@@ -1,9 +1,13 @@
 package game.mafia
 
+import game.mafia.roles.Roles
 import game.mafia.users.Player
+import game.mafia.users.Teams
+import game.mafia.users.UserState
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.fail
 
 internal class MafiaTest {
 
@@ -16,8 +20,18 @@ internal class MafiaTest {
 
         mafia.kickPlayer(testPlayer)
 
-        val realPlayer = mafia.players.find { it.id == testPlayer.id }
-        testPlayer.equals()
+        val isKicked = mafia.players.find { it.id == testPlayer.id }
+
+        assertNull(isKicked, "Player hasn't been kicked\n")
+        if (
+            testPlayer.isHost ||
+            testPlayer.position != 0u ||
+            testPlayer.role != Roles.NONE ||
+            testPlayer.team != Teams.NONE ||
+            testPlayer.state != UserState.NOT_IN_GAME
+        ) {
+            fail("Kicked player didn't return to default state\n")
+        }
     }
 
     @Test
