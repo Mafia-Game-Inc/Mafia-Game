@@ -1,6 +1,7 @@
 package game.mafia
 
 import game.mafia.roles.Roles
+import game.mafia.roles.kill
 import game.mafia.users.Player
 import game.mafia.users.UserState
 import org.junit.jupiter.api.Assertions.*
@@ -48,4 +49,25 @@ internal class MafiaTest {
             "Mafia role incorrectly assigned:\n"
         )
     }
+
+    @Test
+    fun testKill () {
+        val player = Player ("test")
+        player.state = UserState.ALIVE
+        kill(player)
+        assertTrue(player.state == UserState.KILLED, "Player isn't dead")
+    }
+
+    @Test
+    fun testJoinLobby() {
+        val mafia = Mafia("test")
+        val id = mafia.gameId
+        val empList = mutableListOf<Mafia>()
+        val player = Player("testPlayer")
+        empList.add(mafia)
+
+        player.joinGame(id, empList)
+        assertEquals(player.id, mafia.players.first().id, "Player hasn't joined")
+    }
+
 }
