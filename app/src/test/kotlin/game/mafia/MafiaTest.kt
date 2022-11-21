@@ -48,4 +48,52 @@ internal class MafiaTest {
             "Mafia role incorrectly assigned:\n"
         )
     }
+
+
+    @Test
+    fun addPlayer() {
+
+        val mafia = Mafia("testExample")
+        val testPlayersState = mutableListOf<Player>()
+        val testAlive = 9
+        val testSpectators = 3
+        val playersCount = testAlive + testSpectators
+
+        for (i in 1..playersCount) {
+            val player = Player("TestPlayer #$i")
+
+            mafia.players.add(player)  // Не шарю, как добавить в список. Сделал так, как было у Саши М.
+
+            if (i >= 9) {
+                player.state = UserState.SPECTATOR
+            } else {
+                player.state = UserState.ALIVE
+            }
+
+            testPlayersState.add(player) // Не шарю, как добавить в список. Сделал так, как было у Саши М.
+
+            assertEquals(
+                null,
+                player,
+                "Player object is null\n"
+            )
+        }
+
+        val realAlive = mafia.players.count { it.state == UserState.ALIVE }
+        val realSpecs = mafia.players.count { it.state == UserState.SPECTATOR }
+
+        assertEquals(
+            realAlive,
+            testAlive,
+            "Spectator state was incorrectly assigned\n"
+        )
+
+        assertEquals(
+            realSpecs,
+            realSpecs,
+            "Alive state was incorrectly assigned\n"
+        )
+
+    }
+
 }
