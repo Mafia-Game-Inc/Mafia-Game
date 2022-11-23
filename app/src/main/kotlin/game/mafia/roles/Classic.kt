@@ -8,7 +8,8 @@ import java.util.*
 * */
 
 class ClassicPreSet {
-    var redPlayers = 7
+    var playersAmount = 10
+    var redPlayers = 6
     var blackPlayers = 3
     var activePlayersAmount = 4
     var activeRoles = listOf(
