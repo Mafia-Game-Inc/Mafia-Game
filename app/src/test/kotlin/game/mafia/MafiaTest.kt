@@ -1,11 +1,12 @@
 package game.mafia
 
-<<<<<<< HEAD
-import game.mafia.roles.Roles
-import game.mafia.users.Player
-import game.mafia.users.UserState
-import org.junit.jupiter.api.Assertions.*
+import game.exceptions.*
+import game.mafia.roles.*
+import game.mafia.users.*
+
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.fail
 
 internal class MafiaTest {
     @Test
@@ -48,16 +49,7 @@ internal class MafiaTest {
             realMafiaAmount,
             "Mafia role incorrectly assigned:\n"
         )
-=======
-import game.exceptions.*
-import game.mafia.roles.*
-import game.mafia.users.*
-
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.fail
-
-internal class MafiaTest {
+    }
 
     @Test
     fun testKickPlayerByPlayer() {
@@ -134,6 +126,5 @@ internal class MafiaTest {
         if (!isExceptionThrown) {
             fail("Method must throw InvalidInputArgumentException")
         }
->>>>>>> writing_testKickPlayer
     }
 }

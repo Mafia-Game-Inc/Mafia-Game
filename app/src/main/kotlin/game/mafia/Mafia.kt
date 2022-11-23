@@ -1,8 +1,8 @@
 package game.mafia
 
+import game.exceptions.*
 import game.mafia.roles.*
 import game.mafia.users.*
-import game.exceptions.*
 
 import kotlin.random.Random
 import kotlin.random.nextUInt
