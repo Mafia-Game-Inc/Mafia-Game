@@ -2,6 +2,7 @@ package game.mafia
 
 import game.mafia.roles.*
 import game.mafia.users.*
+import game.exceptions.*
 
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -46,15 +47,22 @@ class Mafia(var gameName: String) {
     }
 
     fun kickPlayer(player: Player) {
+        if(!players.remove(player)) {
+            throw InvalidInputArgumentException("No such player in lobby")
+        }
         player.toDefaultState()
-        players.remove(player)
     }
 
     fun kickPlayer(playerPos: UInt) {
-        val player = players.find { it.position == playerPos }
+        if (playerPos !in 1u..preSet.playersAmount.toUInt()) {
+            throw InvalidInputArgumentException("Position out is bounds")
+        }
 
-        player?.toDefaultState()
+        val player = players.find { it.position == playerPos } ?:
+                    throw InvalidInputArgumentException("No such player in lobby")
+
         players.remove(player)
+        player.toDefaultState()
     }
 
 
