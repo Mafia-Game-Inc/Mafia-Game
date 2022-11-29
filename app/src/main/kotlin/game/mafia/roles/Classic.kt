@@ -3,12 +3,8 @@ package game.mafia.roles
 import game.mafia.users.*
 import java.util.*
 
-/*
-* 1. захардкоженый вариант просто чтоб работал
-* */
-
 class ClassicPreSet {
-    var playersAmount = 10
+    var playersAmount = 9
     var redPlayers = 6
     var blackPlayers = 3
     var activePlayersAmount = 4
@@ -18,16 +14,17 @@ class ClassicPreSet {
         RoleData(1, Teams.RED, Roles.SHERIFF)
     )
 
+    fun configure() {}
+
     fun runNight(players: MutableList<Player>) {
         for (player in players) {
             if (player.role == Roles.SHERIFF && player.state == UserState.ALIVE) {
                 println("Hey, Sheriff, try to find mafia")
 
-                val reader = Scanner(System.`in`)
-                val integer = reader.nextInt()
+                val sheriffChoice = readln().toInt()
 
                 //Check for validity of input (integer >= 1)
-                checkForMafia(players[integer - 1])
+                checkForMafia(players[sheriffChoice - 1])
             }
         }
 
@@ -35,39 +32,46 @@ class ClassicPreSet {
             if (player.role == Roles.GODFATHER && player.state == UserState.ALIVE) {
                 println("Hey, Don, try to find Sheriff")
 
-                val reader = Scanner(System.`in`)
-                val integer = reader.nextInt()
+                val godfatherChoice = readln().toInt()
 
                 //Check for validity of input (integer >= 1)
-                checkForCom(players[integer-1])
+                checkForCom(players[godfatherChoice-1])
             }
         }
 
         println("Now, choose to kill!")
+        val mafiaChoice = readln().toInt()
 
-        val reader = Scanner(System.`in`)
-        val integer = reader.nextInt()
+        //check user input if needed ask him to enter again
 
-        kill(players[integer - 1])
-        val position = integer - 1
-        println("Player $position was killed")
+        val playerToKill = players.find {
+            it.position == mafiaChoice.toUInt()
+        }!!
+        if (blackPlayers == 1 && playerToKill.team == Teams.BLACK) return
+
+        kill(playerToKill)
+        println("Player $mafiaChoice was killed tonight")
+    }
+
+
+    fun kill(player: Player) {
+        player.state = UserState.KILLED
+        if (player.team == Teams.RED) { redPlayers-- }
+        else { blackPlayers-- }
+    }
+
+    fun checkForCom(player: Player) {
+        if (player.role == Roles.SHERIFF) {
+            println("You are right!")
+        }
+        else println("You are wrong!")
+    }
+
+    fun checkForMafia(player: Player) {
+        if (player.role == Roles.MAFIA || player.role == Roles.GODFATHER) {
+            println("You are right!")
+        }
+        else println("You are wrong!")
     }
 }
 
-fun kill(player: Player) {
-    player.state = UserState.KILLED
-}
-
-fun checkForCom(player: Player) {
-    if (player.role == Roles.SHERIFF) {
-        println("You are right!")
-    }
-    else println("You are wrong!")
-}
-
-fun checkForMafia(player: Player) {
-    if (player.role == Roles.MAFIA || player.role == Roles.GODFATHER) {
-        println("You are right!")
-    }
-    else println("You are wrong!")
-}

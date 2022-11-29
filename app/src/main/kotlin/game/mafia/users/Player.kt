@@ -1,5 +1,6 @@
 package game.mafia.users
 
+import game.exceptions.*
 import game.mafia.Mafia
 import game.mafia.roles.Roles
 
@@ -11,48 +12,60 @@ import kotlin.random.nextUInt
 * soo player will have limited time
 */
 
-/*
-* rewrite constant declaration
-* according to convention
-* https://stackoverflow.com/questions/44038721/constants-in-kotlin-whats-a-recommended-way-to-create-them
-* */
-const val SHOUT_OUT_TIME = 5
-
 open class Player(var nickname: String) {
     val id: UInt = Random.nextUInt()
-    var isHost: Boolean = false
     var position: UInt = 0u
+    var isHost: Boolean = false
+    var isVoted: Boolean = false
     var role: Roles = Roles.NONE
     var team: Teams = Teams.NONE
     var state: UserState = UserState.NOT_IN_GAME
 
     fun joinGame (gameId: UInt, games: MutableList<Mafia>) {
-        //input validation
-        //games[gameId].addPlayer(this)
+        if (this.state != UserState.NOT_IN_GAME) {
+            throw InvalidStateException("Invalid user state: user is already in other game")
+        }
 
-        games.find { it.gameId == gameId }?.addPlayer(this)
+        val currGame = games.find { it.gameId == gameId }
+            ?: throw InvalidInputArgumentException(
+                "Invalid gameId argument: Game with such id doesn't exist"
+            )
+        currGame.addPlayer(this)
 
-        println("player $id joined lobby $gameId")
+        println("player $id joined lobby ${currGame.gameName}")
     }
 
-    fun createGame (lobbyName: String, games: MutableList<Mafia>) {
-        val game = Mafia(lobbyName)
+    fun createGame (gameName: String, games: MutableList<Mafia>): Mafia {
+        if (this.state != UserState.NOT_IN_GAME) {
+            throw InvalidStateException("Invalid user state: user is already in other game")
+        }
+
+        if (games.find { it.gameName == gameName } != null) {
+            throw InvalidInputArgumentException("Invalid game name: game with such name already exists")
+        }
+
+        val game = Mafia(gameName)
 
         this.isHost = true
         game.addPlayer(this)
         games.add(game)
 
-        println("player $id joined lobby $lobbyName")
+        println("player $id joined lobby $gameName")
+
+        return game
     }
 
 
     fun vote (playerPos: UInt): Boolean {
-        if (playerPos == this.position) return false
+        println("player number $position is voting...")
+
+        if (playerPos == this.position) {
+            throw InvalidInputArgumentException("Player can't for itself")
+        }
 
         println("vote for $playerPos? (false/true)")
         val voteChoice = readln().toBoolean()
-
-        println("player number $position is voted")
+        isVoted = voteChoice
 
         return voteChoice
     }
@@ -67,14 +80,39 @@ open class Player(var nickname: String) {
 //        delay(TimeUnit.SECONDS.toMillis(SHOUT_OUT_TIME.toLong()))
     }
 
-    fun expose (players: MutableList<Player>): Player? { // alivePlayers should be hashmap<pos, Player>
+    fun expose(alivePlayersPos: MutableList<UInt>): UInt { // alivePlayers should be set<pos, Player>
         println("player number $position is exposing...")
-
-        println("choose player from: $players")// should print only positions
+        println("choose player from below or enter 0")
+        println(alivePlayersPos)
 
         val chosenPlayerPos = readln().toUInt()
+        if (chosenPlayerPos == 0u) return 0u
 
-        return players.find { it.position == chosenPlayerPos }
+        //here program have to force user to enter correct input
+        //don't throw an error
+        if (chosenPlayerPos == this.position) {
+            throw InvalidInputArgumentException("Invalid chosen position: player can't expose itself")
+        }
+        if (!alivePlayersPos.contains(chosenPlayerPos)) {
+            throw InvalidInputArgumentException("Invalid chosen position: no such position available")
+        }
+
+        return chosenPlayerPos
+    }
+
+    fun choosePosition(availablePositions: List<UInt>) {
+        println("choose one from below")
+        println(availablePositions)
+
+        val chosenPos = readln().toUInt()
+
+        //here program have to force user to enter correct input
+        //don't throw an error
+        if (!availablePositions.contains(chosenPos)) {
+            throw IllegalArgumentException("No such choice")
+        }
+
+        this.position = chosenPos
     }
 
 
@@ -84,5 +122,22 @@ open class Player(var nickname: String) {
         this.role = Roles.NONE
         this.team = Teams.NONE
         this.state = UserState.NOT_IN_GAME
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Player) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    override fun toString(): String {
+        return "Player(nickname='$nickname', id=$id, isHost=$isHost, position=$position, role=$role, team=$team, state=$state)"
     }
 }

@@ -127,4 +127,56 @@ internal class MafiaTest {
             fail("Method must throw InvalidInputArgumentException")
         }
     }
+
+    @Test
+    fun testAddPlayer() {
+        val mafia = Mafia("testMafia")
+
+        //testing if method correctly adds player
+        val ex1 = Player("ex1")
+        val testPos = 4u
+
+        mafia.addPlayer(ex1, testPos)
+
+        assertTrue(
+            ex1.state == UserState.ALIVE,
+            "Method didn't change state to ALIVE\n"
+        )
+        assertTrue(
+            ex1.position == testPos,
+            "Method didn't change position\n"
+        )
+        assertTrue(
+            mafia.players.contains(ex1),
+            "Method didn't add player\n"
+        )
+
+        //testing if method correctly adds player if lobby is full
+        val ex2 = Player("ex2")
+
+        mafia.players.clear()
+        for (i in 1..9) {
+            mafia.players.add(Player("$i"))
+        }
+        mafia.addPlayer(ex2)
+
+        assertTrue(
+            ex2.state == UserState.SPECTATOR,
+            "Method didn't change state to SPECTATOR\n"
+        )
+
+        //testing if method throw error
+        val ex3 = Player("ex3")
+
+        mafia.players.clear()
+        mafia.addPlayer(ex3, 6u)
+
+        val exception = assertThrows(InvalidInputArgumentException::class.java) {
+            mafia.addPlayer(ex3)
+        }
+        assertEquals(
+            exception.message,
+            "Invalid player object: that player is already in this lobby"
+        )
+    }
 }

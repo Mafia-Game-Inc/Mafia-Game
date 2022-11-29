@@ -7,15 +7,10 @@ import game.mafia.users.*
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
-/*
-* implement interruption of game loop
-* so game can be paused
-*/
-
 const val TIME_FOR_SPEECH = 60u
 const val TIME_FOR_DEFENSE = 30u
 
-class Mafia(var gameName: String) {
+open class Mafia(var gameName: String) {
     val gameId: UInt = Random.nextUInt()
     var players = mutableListOf<Player>()
     var preSet: ClassicPreSet = ClassicPreSet()
@@ -32,20 +27,29 @@ class Mafia(var gameName: String) {
 
     fun pauseGame() {}
 
+    fun resumeGame() {}
+
+
     fun addPlayer(player: Player) {
+        if (this.players.contains(player)) {
+            throw InvalidInputArgumentException(
+                "Invalid player object: that player is already in this lobby"
+            )
+        }
+
         if (this.players.size >= 9) {
             player.state = UserState.SPECTATOR
         } else {
             player.state = UserState.ALIVE
+            player.choosePosition(freePositions())
         }
 
-        val playerPos = readln().toUInt()
-        //check if this position is not already busy
-        player.position = playerPos
-
-        players.add(player)
+        this.players.add(player)
     }
 
+    fun addPlayer(playerId: Int) {}
+
+    //fix
     fun kickPlayer(player: Player) {
         if(!players.remove(player)) {
             throw InvalidInputArgumentException("No such player in lobby")
@@ -67,15 +71,16 @@ class Mafia(var gameName: String) {
 
 
     fun runMafia() {
+        players.sortBy { it.position }
         giveRoles()
 
         while(checkRules()) {
             runDay()
-            if (checkRules()) break
+            if (!checkRules()) break
             preSet.runNight(players)
         }
 
-        if (this.preSet.blackPlayers == 0) {
+        if (preSet.blackPlayers == 0) {
             println("Red city win!")
         } else {
             println("Black city win!")
@@ -83,38 +88,60 @@ class Mafia(var gameName: String) {
     }
 
     fun runDay() {
+        val alivePositionsList = this.alivePlayersPos()
         val exposedPlayers = mutableListOf<Player>()
-        val votes = MutableList(players.size) { 0u }
-        var exposedPlayer: Player
+        val votes = MutableList(players.size) { 0 }
 
         for (player in players) {
             if (player.state == UserState.ALIVE) {
                 player.say(TIME_FOR_SPEECH)
 
-                exposedPlayer = player.expose(players)!!
+                val chosenPos = player.expose(alivePositionsList)
+                if (chosenPos == 0u) continue
+
+                val exposedPlayer = this.players.find { it.position == chosenPos }!!
                 exposedPlayers.add(exposedPlayer)
+                alivePositionsList.remove(chosenPos)
             }
         }
 
-        for (player in players) {
-            if (player.state == UserState.ALIVE) {
-                player.say(TIME_FOR_DEFENSE)
-            }
+        for (player in exposedPlayers) {
+            player.say(TIME_FOR_DEFENSE)
         }
 
         for (exposed in exposedPlayers) {
+            if (exposed === exposedPlayers.last()) {
+                val nonVoted = players.count { !it.isVoted }
+                votes[exposed.position.toInt() - 1] = nonVoted
+            }
+
             for (player in players) {
-                if (player.state == UserState.ALIVE) {
+                if (player.state == UserState.ALIVE && player != exposed && !player.isVoted) {
                     if (player.vote(exposed.position)) votes[exposed.position.toInt() - 1]++
                 }
             }
         }
 
-        kickPlayer(votes.indexOf(votes.maxOrNull()).toUInt())
+        val positionToKill = votes.indexOf(votes.maxOrNull()).toUInt() + 1u
+        val playerToKill = players.find {
+            it.position == positionToKill
+        }!!
+        preSet.kill(playerToKill)
+
+        println("city voted to kill player at $positionToKill place today")
+
+        players.onEach { it.isVoted = false }
     }
 
+    // true - continue
+    // false - stop
     fun checkRules():Boolean {
-        return preSet.blackPlayers != preSet.redPlayers
+        val red = preSet.redPlayers
+        val black = preSet.blackPlayers
+
+        if (black == 0) return false
+        if (black >= red) return false
+        return true
     }
 
     fun giveRoles() {
@@ -136,5 +163,27 @@ class Mafia(var gameName: String) {
                 }
             }
         }
+    }
+
+    fun alivePlayersPos(): MutableList<UInt> {
+        val positions = mutableListOf<UInt>()
+        for (player in this.players) {
+            if (player.state == UserState.ALIVE) {
+                positions.add(player.position)
+            }
+        }
+        return positions
+    }
+
+    fun freePositions(): List<UInt> {
+        val pos = (1u..9u).toMutableList()
+
+        for (player in players) {
+            if (player.state == UserState.ALIVE) {
+                pos.remove(player.position)
+            }
+        }
+
+        return pos.toList()
     }
 }

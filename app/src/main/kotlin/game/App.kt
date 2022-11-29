@@ -3,11 +3,22 @@
  */
 package game
 
-class App {
-    val greeting: String
-        get() {
-            return "Hello World!"
-        }
-}
+import game.mafia.*
+import game.mafia.users.*
 
-fun main() {}
+fun main() {
+    val games = mutableListOf<Mafia>()
+    val host = Player("Host")
+
+    val testGame = host.createGame("Test_Game", games)
+
+    var i = 'a'
+    val testPlayers = MutableList(8) { Player("${i++}") }
+
+    for (player in testPlayers) {
+        player.joinGame(testGame.gameId, games)
+    }
+    testPlayers.add(host)
+
+    testGame.startGame()
+}
