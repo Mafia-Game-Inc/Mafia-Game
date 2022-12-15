@@ -1,8 +1,9 @@
-package game.mafia
+package game.mafia.old
 
 import game.exceptions.*
-import game.mafia.roles.*
-import game.mafia.users.*
+import game.mafia.old.roles.*
+import game.mafia.old.roles.presets.*
+import game.mafia.old.users.*
 
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -10,14 +11,22 @@ import kotlin.random.nextUInt
 const val TIME_FOR_SPEECH = 60u
 const val TIME_FOR_DEFENSE = 30u
 
-open class Mafia(var gameName: String) {
+class Mafia(var gameName: String, presetType: String = "Classic") {
     val gameId: UInt = Random.nextUInt()
-    var players = mutableListOf<Player>()
-    var preSet: ClassicPreSet = ClassicPreSet()
+    private val players = mutableListOf<Player>()
+    private var preset: Preset = Classic()
+    var gameState: GameStates = GameStates.NOT_STARTED
+        private set
 
+    init {
+        when (presetType) {
+            "Classic" -> preset = Classic()
+            else -> throw InvalidInputArgumentException("Invalid preset type: no such presets available")
+        }
+    }
 
     fun startGame() {
-        if (players.size < 9) {
+        if (players.size < preset.playersAmount) {
             print("Can't start game. There must be 10 players")
             return
         }
@@ -29,75 +38,68 @@ open class Mafia(var gameName: String) {
 
     fun resumeGame() {}
 
-
     fun addPlayer(player: Player) {
-        if (this.players.contains(player)) {
+        if (players.contains(player)) {
             throw InvalidInputArgumentException(
                 "Invalid player object: that player is already in this lobby"
             )
         }
 
-        if (this.players.size >= 9) {
-            player.state = UserState.SPECTATOR
+        if (players.size >= preset.playersAmount) {
+            player.toSpectatorState()
         } else {
-            player.state = UserState.ALIVE
+            player.toAliveState()
             player.choosePosition(freePositions())
         }
 
-        this.players.add(player)
+        players.add(player)
     }
 
-    fun addPlayer(playerId: Int) {}
+    fun removePlayer(player: Player) {
+        if (player.state == UserState.ALIVE && gameState == GameStates.RUNNING) {
+            throw InvalidStateException ("Alive player can't be removed when game is running")
+        }
 
-    //fix
-    fun kickPlayer(player: Player) {
         if(!players.remove(player)) {
             throw InvalidInputArgumentException("No such player in lobby")
         }
         player.toDefaultState()
     }
 
-    fun kickPlayer(playerPos: UInt) {
-        if (playerPos !in 1u..preSet.playersAmount.toUInt()) {
-            throw InvalidInputArgumentException("Position out is bounds")
-        }
-
-        val player = players.find { it.position == playerPos } ?:
-                    throw InvalidInputArgumentException("No such player in lobby")
-
-        players.remove(player)
-        player.toDefaultState()
+    fun changePreset(type: String): Preset {
+        TODO("using switch or kotlin analog return needed object or trow exception")
     }
 
 
-    fun runMafia() {
+    private fun runMafia() {
         players.sortBy { it.position }
         giveRoles()
 
         while(checkRules()) {
             runDay()
             if (!checkRules()) break
-            preSet.runNight(players)
+            preset.runNight(players)
         }
 
-        if (preSet.blackPlayers == 0) {
+        if (preset.blackPlayers == 0) {
             println("Red city win!")
         } else {
             println("Black city win!")
         }
     }
 
-    fun runDay() {
-        val alivePositionsList = this.alivePlayersPos()
+    private fun runDay() {
+        val alivePositionsList = alivePlayersPos().toMutableList()
         val exposedPlayers = mutableListOf<Player>()
         val votes = MutableList(players.size) { 0 }
 
+        //speech and exposing loop
         for (player in players) {
             if (player.state == UserState.ALIVE) {
                 player.say(TIME_FOR_SPEECH)
 
                 val chosenPos = player.expose(alivePositionsList)
-                if (chosenPos == 0u) continue
+                if (chosenPos == 0) continue
 
                 val exposedPlayer = this.players.find { it.position == chosenPos }!!
                 exposedPlayers.add(exposedPlayer)
@@ -105,47 +107,51 @@ open class Mafia(var gameName: String) {
             }
         }
 
+        //defense loop
         for (player in exposedPlayers) {
             player.say(TIME_FOR_DEFENSE)
         }
 
+        //voting loop
         for (exposed in exposedPlayers) {
             if (exposed === exposedPlayers.last()) {
                 val nonVoted = players.count { !it.isVoted }
-                votes[exposed.position.toInt() - 1] = nonVoted
+                votes[exposed.position - 1] = nonVoted
             }
 
             for (player in players) {
                 if (player.state == UserState.ALIVE && player != exposed && !player.isVoted) {
-                    if (player.vote(exposed.position)) votes[exposed.position.toInt() - 1]++
+                    if (player.vote(exposed.position)) votes[exposed.position - 1]++
                 }
             }
         }
 
-        val positionToKill = votes.indexOf(votes.maxOrNull()).toUInt() + 1u
+        //determine what player to kill
+        val positionToKill = votes.indexOf(votes.maxOrNull()) + 1
         val playerToKill = players.find {
             it.position == positionToKill
         }!!
-        preSet.kill(playerToKill)
+        kill(playerToKill)
 
         println("city voted to kill player at $positionToKill place today")
 
         players.onEach { it.isVoted = false }
     }
 
-    // true - continue
-    // false - stop
-    fun checkRules():Boolean {
-        val red = preSet.redPlayers
-        val black = preSet.blackPlayers
+    private fun checkRules():Boolean {
+        // true - continue
+        // false - stop
+
+        val red = preset.redPlayers
+        val black = preset.blackPlayers
 
         if (black == 0) return false
         if (black >= red) return false
         return true
     }
 
-    fun giveRoles() {
-        val randomPos = (1u..9u).shuffled().take(preSet.activePlayersAmount)
+    private fun giveRoles() {
+        val randomPos = (1..preset.playersAmount).shuffled().take(preset.activePlayersAmount)
         val iterator = randomPos.listIterator()
 
         players.onEach {
@@ -153,11 +159,14 @@ open class Mafia(var gameName: String) {
             it.team = Teams.RED
         }
 
-        for (roleData in preSet.activeRoles) {
+        //assigning roles to random players
+        for (roleData in preset.activeRoles) {
             for (i in 1..roleData.amount) {
                 val playerPos = iterator.next()
 
-                players.find { it.position == playerPos }?.let {
+                players
+                    .find { it.position == playerPos }!!
+                    .let {
                     it.team = roleData.team
                     it.role = roleData.role
                 }
@@ -165,18 +174,25 @@ open class Mafia(var gameName: String) {
         }
     }
 
-    fun alivePlayersPos(): MutableList<UInt> {
-        val positions = mutableListOf<UInt>()
+    private fun kill(player: Player) {
+        preset.removePlayer(player)
+        player.toKilledState()
+    }
+
+    private fun alivePlayersPos(): List<Int> {
+        val positions = mutableListOf<Int>()
+
         for (player in this.players) {
             if (player.state == UserState.ALIVE) {
                 positions.add(player.position)
             }
         }
+
         return positions
     }
 
-    fun freePositions(): List<UInt> {
-        val pos = (1u..9u).toMutableList()
+    private fun freePositions(): List<Int> {
+        val pos = (1..preset.playersAmount).toMutableList()
 
         for (player in players) {
             if (player.state == UserState.ALIVE) {

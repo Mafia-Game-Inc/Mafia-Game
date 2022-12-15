@@ -1,5 +1,5 @@
-package game.mafia.roles
+package game.mafia.old.roles
 
-import game.mafia.users.Teams
+import game.mafia.old.users.Teams
 
 data class RoleData(var amount: Int, var team: Teams, var role: Roles)

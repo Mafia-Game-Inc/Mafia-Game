@@ -4,7 +4,7 @@
 package game
 
 import game.mafia.*
-import game.mafia.users.*
+import game.mafia.old.users.*
 
 fun main() {
     val games = mutableListOf<Mafia>()

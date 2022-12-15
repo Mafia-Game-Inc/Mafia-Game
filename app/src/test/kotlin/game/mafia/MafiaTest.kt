@@ -1,8 +1,8 @@
 package game.mafia
 
 import game.exceptions.*
-import game.mafia.roles.*
-import game.mafia.users.*
+import game.mafia.old.roles.*
+import game.mafia.old.users.*
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
