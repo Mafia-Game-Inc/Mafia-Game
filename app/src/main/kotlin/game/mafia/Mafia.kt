@@ -1,9 +1,9 @@
-package game.mafia.old
+package game.mafia
 
 import game.exceptions.*
-import game.mafia.old.roles.*
-import game.mafia.old.roles.presets.*
-import game.mafia.old.users.*
+import game.mafia.roles.*
+import game.mafia.roles.presets.*
+import game.mafia.users.*
 
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -24,6 +24,7 @@ class Mafia(var gameName: String, presetType: String = "Classic") {
             else -> throw InvalidInputArgumentException("Invalid preset type: no such presets available")
         }
     }
+
 
     fun startGame() {
         if (players.size < preset.playersAmount) {
@@ -56,7 +57,7 @@ class Mafia(var gameName: String, presetType: String = "Classic") {
     }
 
     fun removePlayer(player: Player) {
-        if (player.state == UserState.ALIVE && gameState == GameStates.RUNNING) {
+        if (player.state == UserStates.ALIVE && gameState == GameStates.RUNNING) {
             throw InvalidStateException ("Alive player can't be removed when game is running")
         }
 
@@ -95,7 +96,7 @@ class Mafia(var gameName: String, presetType: String = "Classic") {
 
         //speech and exposing loop
         for (player in players) {
-            if (player.state == UserState.ALIVE) {
+            if (player.state == UserStates.ALIVE) {
                 player.say(TIME_FOR_SPEECH)
 
                 val chosenPos = player.expose(alivePositionsList)
@@ -120,7 +121,7 @@ class Mafia(var gameName: String, presetType: String = "Classic") {
             }
 
             for (player in players) {
-                if (player.state == UserState.ALIVE && player != exposed && !player.isVoted) {
+                if (player.state == UserStates.ALIVE && player != exposed && !player.isVoted) {
                     if (player.vote(exposed.position)) votes[exposed.position - 1]++
                 }
             }
@@ -183,7 +184,7 @@ class Mafia(var gameName: String, presetType: String = "Classic") {
         val positions = mutableListOf<Int>()
 
         for (player in this.players) {
-            if (player.state == UserState.ALIVE) {
+            if (player.state == UserStates.ALIVE) {
                 positions.add(player.position)
             }
         }
@@ -195,7 +196,7 @@ class Mafia(var gameName: String, presetType: String = "Classic") {
         val pos = (1..preset.playersAmount).toMutableList()
 
         for (player in players) {
-            if (player.state == UserState.ALIVE) {
+            if (player.state == UserStates.ALIVE) {
                 pos.remove(player.position)
             }
         }

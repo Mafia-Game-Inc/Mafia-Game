@@ -3,6 +3,10 @@ package game.mafia
 import game.exceptions.*
 import game.mafia.old.roles.*
 import game.mafia.old.users.*
+import game.mafia.roles.Roles
+import game.mafia.users.Player
+import game.mafia.users.Teams
+import game.mafia.users.UserStates
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
@@ -20,7 +24,7 @@ internal class MafiaTest {
         for (i in 1..9) {
             val player = Player("$i")
             player.position = i.toUInt()
-            player.state = UserState.ALIVE
+            player.state = UserStates.ALIVE
 
             testPlayers.add(player)
             mafia.players.add(player)
@@ -67,7 +71,7 @@ internal class MafiaTest {
             testPlayer.position != 0u ||
             testPlayer.role != Roles.NONE ||
             testPlayer.team != Teams.NONE ||
-            testPlayer.state != UserState.NOT_IN_GAME
+            testPlayer.state != UserStates.NOT_IN_GAME
         ) fail("Kicked player didn't return to default state\n")
 
         var isExceptionThrown = false
@@ -139,7 +143,7 @@ internal class MafiaTest {
         mafia.addPlayer(ex1, testPos)
 
         assertTrue(
-            ex1.state == UserState.ALIVE,
+            ex1.state == UserStates.ALIVE,
             "Method didn't change state to ALIVE\n"
         )
         assertTrue(
@@ -161,7 +165,7 @@ internal class MafiaTest {
         mafia.addPlayer(ex2)
 
         assertTrue(
-            ex2.state == UserState.SPECTATOR,
+            ex2.state == UserStates.SPECTATOR,
             "Method didn't change state to SPECTATOR\n"
         )
 

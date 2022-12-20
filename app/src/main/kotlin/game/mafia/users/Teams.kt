@@ -1,4 +1,4 @@
-package game.mafia.old.users
+package game.mafia.users
 
 enum class Teams {
     RED, BLACK, NONE

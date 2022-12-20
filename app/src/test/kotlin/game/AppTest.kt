@@ -1,7 +1,7 @@
 package game
 
 import game.mafia.Mafia
-import game.mafia.old.users.Player
+import game.mafia.users.Player
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*

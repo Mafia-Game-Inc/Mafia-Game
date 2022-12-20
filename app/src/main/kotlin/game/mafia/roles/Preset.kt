@@ -1,7 +1,7 @@
-package game.mafia.old.roles
+package game.mafia.roles
 
-import game.mafia.old.users.Player
-import game.mafia.old.users.Teams
+import game.mafia.users.Player
+import game.mafia.users.Teams
 
 abstract class Preset {
     abstract var playersAmount: Int

@@ -1,8 +1,8 @@
-package game.mafia.old.roles
+package game.mafia.roles
 
-import game.mafia.old.users.Player
+import game.mafia.users.Player
 
-fun checkForMafia(sheriff: Player, players: MutableList<Player>, availablePositions: List<UInt>) {
+fun checkForMafia(sheriff: Player, players: MutableList<Player>, availablePositions: List<Int>) {
     println("Hey, Sheriff, try to find mafia choose from:")
     println(availablePositions)
 
@@ -16,14 +16,13 @@ fun checkForMafia(sheriff: Player, players: MutableList<Player>, availablePositi
     else println("You are wrong!")
 }
 
-fun kill(blackTeam: List<Player>, players: MutableList<Player>, availablePositions: List<Player>) {
-    /*
-    * ask every black player for their
-    */
+fun kill(godFather: Player, players: MutableList<Player>, availablePositions: List<Int>) {
+    println("Gog father is choosing which player to kill...")
 
-    for (mafia in blackTeam) {
-        mafia.
-    }
+    //в течении какого-то времени капитан черной команды должен ввести выбор
+
+    val godFatherChoice = godFather.chooseFrom(availablePositions)
+
 
     // думаю стоит выделить один общий метод выбора позиции в вьюшке и обрнуть его методом
     // плеера и в обёртке реализовать обращение к конктерному пользователю
@@ -31,7 +30,7 @@ fun kill(blackTeam: List<Player>, players: MutableList<Player>, availablePositio
     // как сделать чтоб у не приватной переменной не существовало сеттера
 }
 
-fun checkForCom(godFather: Player, players: MutableList<Player>, availablePositions: List<Player>) {
+fun checkForCom(godFather: Player, players: MutableList<Player>, availablePositions: List<Int>) {
     println("Hey, Don, try to find Sheriff")
     println(availablePositions)
 

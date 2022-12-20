@@ -1,8 +1,8 @@
-package game.mafia.old.users
+package game.mafia.users
 
 import game.exceptions.*
-import game.mafia.old.Mafia
-import game.mafia.old.roles.Roles
+import game.mafia.Mafia
+import game.mafia.roles.Roles
 
 import kotlin.random.Random
 import kotlin.random.nextUInt
@@ -19,12 +19,12 @@ open class Player(var nickname: String) {
     var isVoted: Boolean = false
     var role: Roles = Roles.NONE
     var team: Teams = Teams.NONE
-    var state: UserState = UserState.NOT_IN_GAME
+    var state: UserStates = UserStates.NOT_IN_GAME
         private set
 
     //переместить метод в контроллер
     fun joinGame (gameId: UInt, games: MutableList<Mafia>) {
-        if (state != UserState.NOT_IN_GAME) {
+        if (state != UserStates.NOT_IN_GAME) {
             throw InvalidStateException("Invalid user state: user is already in other game")
         }
 
@@ -38,7 +38,7 @@ open class Player(var nickname: String) {
     }
     //переместить метод в контроллер
     fun createGame (gameName: String, games: MutableList<Mafia>): Mafia {
-        if (this.state != UserState.NOT_IN_GAME) {
+        if (this.state != UserStates.NOT_IN_GAME) {
             throw InvalidStateException("Invalid user state: user is already in other game")
         }
 
@@ -59,7 +59,7 @@ open class Player(var nickname: String) {
 
 
     fun vote (playerPos: Int): Boolean {
-        if (state != UserState.ALIVE) {
+        if (state != UserStates.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -77,7 +77,7 @@ open class Player(var nickname: String) {
     }
 
     fun say (time: UInt) { //suspend
-        if (state != UserState.ALIVE) {
+        if (state != UserStates.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -86,7 +86,7 @@ open class Player(var nickname: String) {
     }
 
     fun shoutOut () {//suspend
-        if (state != UserState.ALIVE) {
+        if (state != UserStates.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -95,7 +95,7 @@ open class Player(var nickname: String) {
     }
 
     fun expose(alivePlayersPos: MutableList<Int>): Int { // alivePlayers should be set<pos, Player>
-        if (state != UserState.ALIVE) {
+        if (state != UserStates.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -118,9 +118,34 @@ open class Player(var nickname: String) {
         return chosenPlayerPos
     }
 
+    fun chooseFrom(options: List<Int>): Int {
+        if (state != UserStates.ALIVE) {
+            throw InvalidStateException("Invalid user state: player is not alive")
+        }
+
+        println("player number $position is choosing...")
+        println("choose option from below or enter 0")
+        println(options)
+
+        val chosenOption = readln().toInt()
+        if (chosenOption == 0) return 0
+
+        //here program have to force user to enter correct input
+        //don't throw an error
+        if (!options.contains(chosenOption)) {
+            throw InvalidInputArgumentException("Invalid chosen position: no such position available")
+        }
+
+        return chosenOption
+    }
+
+
     //переместить метод в контроллер
     fun choosePosition(availablePositions: List<Int>) {
-        if (state != Use)
+        if (state != UserStates.NOT_IN_GAME && state != UserStates.SPECTATOR) {
+            throw InvalidStateException("Invalid user state: to choose position player " +
+                    "should not be in a game or be spectator")
+        }
 
         println("choose one from below")
         println(availablePositions)
@@ -136,9 +161,9 @@ open class Player(var nickname: String) {
         this.position = chosenPos
     }
 
-
     //переместить метод в контроллер
     fun changeNickname() {}
+
 
     fun toDefaultState() {
         position = 0
@@ -146,20 +171,20 @@ open class Player(var nickname: String) {
         isVoted = false
         role = Roles.NONE
         team = Teams.NONE
-        state = UserState.NOT_IN_GAME
+        state = UserStates.NOT_IN_GAME
     }
 
     fun toKilledState() {
         isVoted = false
-        state = UserState.KILLED
+        state = UserStates.KILLED
     }
 
     fun toSpectatorState() {
-        state = UserState.SPECTATOR
+        state = UserStates.SPECTATOR
     }
 
     fun toAliveState() {
-        state = UserState.ALIVE
+        state = UserStates.ALIVE
     }
 
 
