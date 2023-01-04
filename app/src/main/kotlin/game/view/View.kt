@@ -1,5 +1,8 @@
 package game.view
 
+import game.mafia.TIME_FOR_SPEECH
+import game.mafia.users.Player
+import game.mafia.users.UserStates
 import kotlinx.coroutines.processNextEventInCurrentThread
 import java.util.concurrent.TimeoutException
 
@@ -8,6 +11,7 @@ import java.util.concurrent.TimeoutException
 */
 val MAX_INPUT_LENGTH = 100;
 const val FORBIDDEN_CHARACTERS = "!@#$%^&*()"
+private val players = mutableListOf<Player>()
 
 fun log(message: String) {
     val currentTime = System.currentTimeMillis()
@@ -32,11 +36,19 @@ fun processInput(inputString: String, timeRemaining: Long): String {
     return inputString
 }
 
+fun sendMessageToAllAlive(inputString: String) {
+    for (player in players) {
+        if (player.state == UserStates.ALIVE) {
+            println(inputString)
+        }
+    }
+}
+
 fun processInputWithErrorHandling(inputString: String, timeRemaining: Long, errorHandler: (String) -> Unit): String {
     try {
         val processedInput = processInput(inputString, timeRemaining)
         log("Input processed successfully: $processedInput")
-        return processedInput
+        sendMessageToAllAlive(processedInput)
     } catch (e: TimeoutException) {
         errorHandler("TimeoutException: ${e.message}")
         log("TimeoutException occurred: ${e.message}")
@@ -47,11 +59,12 @@ fun processInputWithErrorHandling(inputString: String, timeRemaining: Long, erro
     return ""
 }
 
-//
-//fun sendMessage(message: String) {
-//    println(message)
-//}
-//
+fun sendMessageToAllPlayers(inputString: String) {
+    for (player in players) {
+        println(inputString)
+    }
+}
+
 //fun readBoolean(): Boolean {
 //    var input = readln()
 //
@@ -62,7 +75,7 @@ fun processInputWithErrorHandling(inputString: String, timeRemaining: Long, erro
 //
 //    return input.toBoolean()
 //}
-
+//
 //fun readInt(permissibleValues: List<Int>): Int {
 //    var input: Int
 //    try {
