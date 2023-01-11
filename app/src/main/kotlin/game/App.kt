@@ -4,7 +4,6 @@
 package game
 
 import game.mafia.*
-import game.mafia.old.users.*
 import game.mafia.users.Player
 
 fun main() {
