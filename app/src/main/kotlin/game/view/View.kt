@@ -1,17 +1,22 @@
 package game.view
 
-import game.mafia.TIME_FOR_SPEECH
+import game.exceptions.InvalidCharException
+import game.exceptions.InvalidLengthException
+import game.exceptions.InvalidStateException
 import game.mafia.users.Player
 import game.mafia.users.UserStates
-import kotlinx.coroutines.processNextEventInCurrentThread
 import java.util.concurrent.TimeoutException
 
 /*
 * 1. how to limit time for console input
 */
 val MAX_INPUT_LENGTH = 100;
-const val FORBIDDEN_CHARACTERS = "!@#$%^&*()"
+const val forbiddenCharacters = "!@#$%^&*()"
 private val players = mutableListOf<Player>()
+
+fun hasForbiddenCharacters(input: String, forbidden: String): Boolean {
+    return input.any { char -> forbidden.contains(char) }
+}
 
 fun log(message: String) {
     val currentTime = System.currentTimeMillis()
@@ -20,17 +25,15 @@ fun log(message: String) {
     println(logMessage)
 }
 
-fun processInput(inputString: String, timeRemaining: Long): String {
-    if (timeRemaining <= 0) {
-        throw TimeoutException("Time limit reached")
-    }
+fun processInputString(inputString: String): String {
 
     if (inputString.length > MAX_INPUT_LENGTH) {
-        throw IllegalArgumentException("Input exceeded maximum length")
+        throw InvalidLengthException("Input exceeded maximum length")
     }
 
-    if (inputString.contains(FORBIDDEN_CHARACTERS)) {
-        throw IllegalArgumentException("Input contains forbidden characters")
+    val result = hasForbiddenCharacters(inputString, forbiddenCharacters)
+    if (result) {
+        throw InvalidCharException("Input contains forbidden characters")
     }
 
     return inputString
@@ -44,19 +47,18 @@ fun sendMessageToAllAlive(inputString: String) {
     }
 }
 
-fun processInputWithErrorHandling(inputString: String, timeRemaining: Long, errorHandler: (String) -> Unit): String {
+fun readString(inputString: String, errorHandler: (String) -> Unit) {
     try {
-        val processedInput = processInput(inputString, timeRemaining)
+        val processedInput = processInputString(inputString)
         log("Input processed successfully: $processedInput")
         sendMessageToAllAlive(processedInput)
-    } catch (e: TimeoutException) {
-        errorHandler("TimeoutException: ${e.message}")
-        log("TimeoutException occurred: ${e.message}")
-    } catch (e: IllegalArgumentException) {
-        errorHandler("IllegalArgumentException: ${e.message}")
-        log("IllegalArgumentException occurred: ${e.message}")
+    } catch (e: InvalidLengthException) {
+        errorHandler("InvalidLengthException: ${e.message}")
+        log("InvalidLengthException occurred: ${e.message}")
+    } catch (e: InvalidCharException) {
+        errorHandler("InvalidCharException: ${e.message}")
+        log("InvalidCharException occurred: ${e.message}")
     }
-    return ""
 }
 
 fun sendMessageToAllPlayers(inputString: String) {
@@ -65,32 +67,57 @@ fun sendMessageToAllPlayers(inputString: String) {
     }
 }
 
-//fun readBoolean(): Boolean {
-//    var input = readln()
-//
-//    while (input != "false" && input != "true") {
-//        sendMessage("the value should be 'false' or 'true', try again:")
-//        input = readln()
-//    }
-//
-//    return input.toBoolean()
-//}
-//
-//fun readInt(permissibleValues: List<Int>): Int {
-//    var input: Int
-//    try {
-//        input = readln().toInt()
-//    } catch (e: NumberFormatException) {
-//        //?
-//    }
-//
-//    while (!permissibleValues.contains(input)) {
-//        sendMessage("the value should one of given below")
-//        sendMessage("$permissibleValues")
-//        sendMessage("try again:")
-//        //здесь тоже словить ошибку
-//        input = readln().toInt()
-//    }
-//
-//    return input
-//}
+fun sendMessagePlayer(inputString: String, player: Player) {
+    println(inputString)
+    // Потом сюда, как и в другие функции вывода изображений, нужно будет
+    // добавить логику работы с отдельными пользователями
+    // Как именно мы будем общаться с ними и какие запросы куда отправлять
+}
+
+fun processInputBoolean(inputString: String): String {
+
+    if (inputString != "false" && inputString != "true") {
+        throw InvalidCharException("Input contains forbidden characters")
+    }
+
+    return inputString
+}
+
+fun readBoolean(inputString: String, errorHandler: (String) -> Unit): Any {
+    try {
+        val processedInput = processInputBoolean(inputString)
+        log("Input processed successfully: $processedInput")
+        return processedInput.toBoolean()
+    } catch (e: InvalidStateException) {
+        errorHandler("InvalidLengthException: ${e.message}")
+        log("InvalidLengthException occurred: ${e.message}")
+        // Тут нужно придумать, как в случае, если воод не правильный, но время ещё есть
+        // нам нужно ожидать следующего ввода пользователя
+    }
+    return ""
+}
+
+
+fun processInputInt(input: String, permissibleValues: List<Int>): Int{
+
+    val inputInt = input.toInt()
+    if (!permissibleValues.contains(inputInt)) {
+        throw InvalidCharException("Input contains forbidden characters")
+    }
+
+    return inputInt
+}
+
+fun readInt(input: String, permissibleValues: List<Int>, errorHandler: (String) -> Unit): Any {
+    try {
+        val processedInput = processInputInt(input, permissibleValues)
+        log("Input processed successfully: $processedInput")
+        return processedInput
+    } catch (e: InvalidStateException) {
+        errorHandler("InvalidLengthException: ${e.message}")
+        log("InvalidLengthException occurred: ${e.message}")
+        // Тут нужно придумать, как в случае, если воод не правильный, но время ещё есть
+        // нам нужно ожидать следующего ввода пользователя
+    }
+    return ""
+}
