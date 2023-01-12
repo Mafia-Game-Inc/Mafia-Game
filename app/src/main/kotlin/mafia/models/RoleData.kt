@@ -1,5 +1,6 @@
-package game.mafia.roles
+package mafia.models
 
-import game.mafia.users.Teams
+import mafia.decks.enams.*
 
 data class RoleData(var amount: Int, var team: Teams, var role: Roles)
+
