@@ -1,7 +1,6 @@
-package mafia.decks.classic
+package mafia.decks
 
 import mafia.RunnableService
-import mafia.decks.kill
 import mafia.models.Lobby
 import mafia.users.*
 
@@ -9,7 +8,7 @@ import mafia.users.*
 const val TIME_FOR_SPEECH = 60u
 const val TIME_FOR_DEFENSE = 30u
 
-class ClassicDayRunner: RunnableService {
+class DayRunner: RunnableService {
     private val exposedPlayers = mutableListOf<Player>()
     private var alivePositionsList = mutableListOf<Int>()
     private var votes = mutableListOf<Int>()

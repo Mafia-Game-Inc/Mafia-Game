@@ -1,5 +1,6 @@
 package mafia.decks
 
+import exceptions.DataStateException
 import mafia.decks.enams.*
 import mafia.models.*
 import mafia.models.DeckSettings
@@ -37,13 +38,16 @@ fun kill(player: Player) {
 }
 
 fun determineWinner(): Teams {
-    for(team in DeckSettings.teams) {
-        if (team.key != Teams.RED && team.value >= DeckSettings.playersAmount) {
-            return team.key
-        } else {
-
-        }
-    }
+    if (DeckSettings.blackPlayers == 0) return Teams.RED
+    if (DeckSettings.blackPlayers >= DeckSettings.redPlayers) return Teams.BLACK
 
     return Teams.NONE
+}
+
+fun checkRules(): Boolean {
+    // true - continue
+    // false - stop
+    if (DeckSettings.blackPlayers == 0) return false
+    if (DeckSettings.blackPlayers >= DeckSettings.redPlayers) return false
+    return true
 }
