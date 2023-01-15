@@ -1,15 +1,15 @@
 package mafia.decks
 
-import mafia.decks.enams.Roles
-import mafia.decks.enams.Teams
+import mafia.decks.enams.*
 import mafia.models.*
+import mafia.models.DeckSettings
 import mafia.users.Player
 
 fun giveRoles() {
-    val randomPos = (1..DeckSettings.playersAmount)
+    val randomPositions = (1..DeckSettings.playersAmount)
         .shuffled()
         .take(DeckSettings.activePlayersAmount)
-    val iterator = randomPos.listIterator()
+    val iterator = randomPositions.listIterator()
 
     Lobby.players.onEach {
         it.role = Roles.CITIZEN
@@ -31,4 +31,19 @@ fun giveRoles() {
     }
 }
 
-fun kill(player: Player) {}
+fun kill(player: Player) {
+    DeckSettings.removePlayer(player)
+    player.toKilledState()
+}
+
+fun determineWinner(): Teams {
+    for(team in DeckSettings.teams) {
+        if (team.key != Teams.RED && team.value >= DeckSettings.playersAmount) {
+            return team.key
+        } else {
+
+        }
+    }
+
+    return Teams.NONE
+}

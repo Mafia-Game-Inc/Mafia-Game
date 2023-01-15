@@ -9,6 +9,8 @@ class ClassicDeckService: DeckRunnerService {
     override val configurator = ClassicConfiguratorService()
 
     override fun run() {
+        configurator.configure()
 
+        while (ruleChecker.checkRules())
     }
 }

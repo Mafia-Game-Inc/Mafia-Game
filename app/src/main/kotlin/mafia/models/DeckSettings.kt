@@ -11,7 +11,7 @@ object DeckSettings {
     var activeRoles = listOf<RoleData>()
 
     fun removePlayer(player: Player) {
-        var amount = teams[player.team]
-        amount -= 1 ?: throw InvalidInputArgumentException("No such players in lobby")
+        teams[player.team]?.minus(1)
+            ?: throw IllegalArgumentException("")
     }
 }

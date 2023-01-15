@@ -1,7 +1,9 @@
 package mafia.users
 
 import game.exceptions.InvalidInputArgumentException
-import game.exceptions.InvalidStateException
+import exceptions.InvalidStateException
+import mafia.decks.enams.Roles
+import mafia.decks.enams.Teams
 import kotlin.random.Random
 import kotlin.random.nextUInt
 
@@ -16,7 +18,7 @@ class Player {
         private set
 
     fun vote (playerPos: Int): Boolean {
-        if (state != UserStates.ALIVE) {
+        if (state != PlayerState.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -34,7 +36,7 @@ class Player {
     }
 
     fun say (time: UInt) { //suspend
-        if (state != UserStates.ALIVE) {
+        if (state != PlayerState.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -43,7 +45,7 @@ class Player {
     }
 
     fun shoutOut () {//suspend
-        if (state != UserStates.ALIVE) {
+        if (state != PlayerState.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -52,7 +54,7 @@ class Player {
     }
 
     fun expose(alivePlayersPos: MutableList<Int>): Int { // alivePlayers should be set<pos, Player>
-        if (state != UserStates.ALIVE) {
+        if (state != PlayerState.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -76,7 +78,7 @@ class Player {
     }
 
     fun chooseFrom(options: List<Int>): Int {
-        if (state != UserStates.ALIVE) {
+        if (state != PlayerState.ALIVE) {
             throw InvalidStateException("Invalid user state: player is not alive")
         }
 
@@ -94,5 +96,10 @@ class Player {
         }
 
         return chosenOption
+    }
+
+
+    fun toKilledState() {
+        state = PlayerState.KILLED
     }
 }

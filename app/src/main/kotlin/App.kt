@@ -1,3 +1,4 @@
+import mafia.models.DeckSettings
 import kotlin.random.Random
 
 enum class A {
@@ -5,5 +6,6 @@ enum class A {
 }
 
 fun main() {
-    val hashMap = HashMap<A, Int>()
+    val i: Int? = null
+    i?.minus(1) ?: throw IllegalArgumentException("")
 }
