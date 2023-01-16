@@ -1,10 +1,9 @@
-package mafia.decks
+package mafia
 
-import exceptions.DataStateException
 import mafia.decks.enams.*
+import mafia.decks.*
 import mafia.models.*
-import mafia.models.DeckSettings
-import mafia.users.Player
+import mafia.users.*
 
 fun giveRoles() {
     val randomPositions = (1..DeckSettings.playersAmount)
@@ -32,11 +31,6 @@ fun giveRoles() {
     }
 }
 
-fun kill(player: Player) {
-    DeckSettings.removePlayer(player)
-    player.toKilledState()
-}
-
 fun determineWinner(): Teams {
     if (DeckSettings.blackPlayers == 0) return Teams.RED
     if (DeckSettings.blackPlayers >= DeckSettings.redPlayers) return Teams.BLACK
@@ -50,4 +44,9 @@ fun checkRules(): Boolean {
     if (DeckSettings.blackPlayers == 0) return false
     if (DeckSettings.blackPlayers >= DeckSettings.redPlayers) return false
     return true
+}
+
+fun killAction(player: Player) {
+    kill(player)
+    println()
 }

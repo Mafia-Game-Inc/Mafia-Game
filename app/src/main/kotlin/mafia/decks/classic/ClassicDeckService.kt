@@ -1,18 +1,16 @@
 package mafia.decks.classic
 
-import mafia.decks.DayRunner
-import mafia.decks.interfaces.DeckRunnerService
+import mafia.decks.DeckService
 
-class ClassicDeckService: DeckRunnerService {
-    override val dayRunner = DayRunner()
+class ClassicDeckService: DeckService {
     override val nightRunner = ClassicNightRunner()
-    override val configurator = ClassicConfiguratorService()
+    override val deckConfigurator = ClassicConfiguratorService()
 
-    override fun run() {
-        configurator.configure()
+    override fun configureDeckSettings() {
+        TODO("Not yet implemented")
+    }
 
-        while (ruleChecker.checkRules()) {
-
-        }
+    override fun runNight() {
+        TODO("Not yet implemented")
     }
 }

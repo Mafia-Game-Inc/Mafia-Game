@@ -2,9 +2,11 @@ package mafia.models
 
 import mafia.users.Player
 import mafia.users.PlayerState
+import java.util.*
 
 object Lobby {
-    val players = mutableListOf<Player>()
+    val players = TreeSet<Player>(Comparator.comparingInt { it.position })
+//    val players = mutableListOf<Player>()
 
     fun getAlivePlayersPositions(): List<Int> {
         val positions = mutableListOf<Int>()

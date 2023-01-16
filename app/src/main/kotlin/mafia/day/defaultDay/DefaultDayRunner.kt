@@ -1,14 +1,11 @@
-package mafia.decks
+package mafia.day.defaultDay
 
-import mafia.RunnableService
-import mafia.models.Lobby
+import mafia.*
+import mafia.day.hangPlayer
+import mafia.models.*
 import mafia.users.*
 
-//those data must be distinguished in separate class
-const val TIME_FOR_SPEECH = 60u
-const val TIME_FOR_DEFENSE = 30u
-
-class DayRunner: RunnableService {
+class DefaultDayRunner: RunnableService {
     private val exposedPlayers = mutableListOf<Player>()
     private var alivePositionsList = mutableListOf<Int>()
     private var votes = mutableListOf<Int>()
@@ -28,7 +25,7 @@ class DayRunner: RunnableService {
     private fun speechAndExposingLoop() {
         for (player in Lobby.players) {
             if (player.state == PlayerState.ALIVE) {
-                player.say(TIME_FOR_SPEECH)
+                player.say(DaySettings.timeForSpeech)
 
                 val chosenPos = player.expose(alivePositionsList)
                 if (chosenPos == 0) continue
@@ -42,7 +39,7 @@ class DayRunner: RunnableService {
 
     private fun defenceLoop() {
         for (player in exposedPlayers) {
-            player.say(TIME_FOR_DEFENSE)
+            player.say(DaySettings.timeForDefence)
         }
     }
 
@@ -66,9 +63,8 @@ class DayRunner: RunnableService {
         val playerToKill = Lobby.players.find {
             it.position == positionToKill
         }!!
-        kill(playerToKill)
 
-        println("city voted to kill player at $positionToKill place today")
+        hangPlayer(playerToKill)
     }
 
     private fun toStartingState() {

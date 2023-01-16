@@ -1,4 +1,4 @@
-package mafia.decks.interfaces
+package mafia
 
 interface ConfiguratorService {
     fun configure()

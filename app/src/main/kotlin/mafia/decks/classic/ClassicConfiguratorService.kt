@@ -1,6 +1,6 @@
 package mafia.decks.classic
 
-import mafia.decks.interfaces.ConfiguratorService
+import mafia.ConfiguratorService
 
 class ClassicConfiguratorService: ConfiguratorService {
     override fun configure() {

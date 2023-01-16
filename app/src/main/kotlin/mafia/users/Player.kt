@@ -1,19 +1,18 @@
 package mafia.users
 
-import game.exceptions.InvalidInputArgumentException
-import exceptions.InvalidStateException
-import mafia.decks.enams.Roles
-import mafia.decks.enams.Teams
-import kotlin.random.Random
-import kotlin.random.nextUInt
+import exceptions.*
+import mafia.decks.enams.*
+import kotlin.random.*
 
 class Player {
     val id: UInt = Random.nextUInt()
-    var position: Int = 0
+    var position: Int = -1
     var isHost: Boolean = false
     var isVoted: Boolean = false
     var role: Roles = Roles.NONE
+        private set
     var team: Teams = Teams.NONE
+        private set
     var state: PlayerState = PlayerState.NOT_IN_GAME
         private set
 
@@ -101,5 +100,29 @@ class Player {
 
     fun toKilledState() {
         state = PlayerState.KILLED
+    }
+
+    // нужно другое название, что лучше подходило по смыслу к "не в игре"
+    fun toDefaultState() {
+        state = PlayerState.NOT_IN_GAME
+        team = Teams.NONE
+        role = Roles.NONE
+        isVoted = false
+        isHost = false
+        position = -1
+    }
+
+    fun toAliveState(role: Roles, team: Teams) {
+        state = PlayerState.ALIVE
+        this.team = team
+        this.role = role
+    }
+
+    fun toSpectatorState() {
+        state = PlayerState.SPECTATOR
+        team = Teams.NONE
+        role = Roles.NONE
+        isVoted = false
+        var position: Int = -1
     }
 }

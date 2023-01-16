@@ -4,15 +4,6 @@ import exceptions.InvalidInputArgumentException
 import mafia.decks.enams.Teams
 import mafia.users.Player
 
-class Settings {
-    var daySettings = DaySettings()
-    var DeckSettings = DeckSettings()
-}
-
-class DaySettings {
-
-}
-
 object DeckSettings {
     var playersAmount = -1
     var activePlayersAmount = -1
