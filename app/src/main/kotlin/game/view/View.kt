@@ -5,15 +5,15 @@ import game.mafia.users.Player
 import game.mafia.users.UserStates
 
 object GameView {
-    const val MAX_INPUT_LENGTH = 100
+    private const val MaxInputLength = 100
     const val forbiddenCharacters = "!@#$%^&*()"
     private val players = mutableListOf<Player>()
 
-    fun hasForbiddenCharacters(input: String, forbidden: String): Boolean {
+    private fun hasForbiddenCharacters(input: String, forbidden: String): Boolean {
         return input.any { char -> forbidden.contains(char) }
     }
 
-    fun log(message: String) {
+    private fun log(message: String) {
         val currentTime = System.currentTimeMillis()
         val logMessage = "[$currentTime] $message"
         // code to write logMessage to a log file or send it to a monitoring system
@@ -35,7 +35,7 @@ object GameView {
         }
     }
 
-    fun sendMessageToAllAlive(message: String) {
+    private fun sendMessageToAllAlive(message: String) {
         for (player in players) {
             if (player.state == UserStates.ALIVE) {
                 val currentTime = getCurrentTime()
@@ -45,86 +45,84 @@ object GameView {
         }
     }
 
-    fun sendMessageToPlayer(message: String) {
+    private fun sendMessageToPlayer(message: String) {
         val currentTime = getCurrentTime()
         val messageWithTimeMark = "[$currentTime] $message"
         println(messageWithTimeMark)
         // logic to work with individual user views here
     }
-}
 
-
-private fun processInputString(message: String): String {
-    if (message.length > GameView.MAX_INPUT_LENGTH) {
-        throw InvalidLengthException("Input exceeded maximum length")
-    }
-    val result = GameView.hasForbiddenCharacters(message, GameView.forbiddenCharacters)
-    if (result) {
-        throw InvalidCharException("Input contains forbidden characters")
-    }
-    return message
-}
-
-fun readString(): String {
-    try {
-        val message = readln()
-        val processedInput = processInputString(message)
-        GameView.log("Input processed successfully: $processedInput")
-        GameView.sendMessageToAllAlive(processedInput)
-    } catch (e: InvalidLengthException) {
-        GameView.log("InvalidLengthException occurred: ${e.message}")
-    } catch (e: InvalidCharException) {
-        GameView.log("InvalidCharException occurred: ${e.message}")
-    }
-    GameView.sendMessageToPlayer("Invalid input, please try again")
-    return readString()
-}
-
-
-private fun processInputBoolean(inputString: String): String {
-    if (inputString != "false" && inputString != "true") {
-        throw InvalidCharException("Input contains forbidden characters")
+    private fun processMessageString(message: String): String {
+        if (message.length > GameView.MaxInputLength) {
+            throw InvalidLengthException("Input exceeded maximum length")
+        }
+        val result = GameView.hasForbiddenCharacters(message, GameView.forbiddenCharacters)
+        if (result) {
+            throw InvalidCharException("Input contains forbidden characters")
+        }
+        return message
     }
 
-    return inputString
-}
-
-fun readBoolean(): Boolean {
-    try {
-        val message = readln()
-        val processedInput = processInputBoolean(message)
-        GameView.log("Input processed successfully: $processedInput")
-        return processedInput.toBoolean()
-    } catch (e: InvalidStateException) {
-        GameView.log("InvalidLengthException occurred: ${e.message}")
-        GameView.sendMessageToPlayer("InvalidLengthException occurred: ${e.message}")
-        // Тут нужно придумать, как в случае, если воод не правильный, но время ещё есть
-        // нам нужно ожидать следующего ввода пользователя
+    private fun processMessageInt(message: String, permissibleValues: List<Int>): Int{
+        val messageInt = message.toInt()
+        if (!permissibleValues.contains(messageInt)) {
+            throw InvalidCharException("Input contains forbidden characters")
+        }
+        return messageInt
     }
-    GameView.sendMessageToPlayer("Invalid input, please try again")
-    return readBoolean()
-}
 
+    private fun processMessageBoolean(message: String): String {
+        if (message != "false" && message != "true") {
+            throw InvalidCharException("Input contains forbidden characters")
+        }
 
-private fun processInputInt(message: String, permissibleValues: List<Int>): Int{
-    val messageInt = message.toInt()
-    if (!permissibleValues.contains(messageInt)) {
-        throw InvalidCharException("Input contains forbidden characters")
+        return message
     }
-    return messageInt
-}
 
-fun readInt(permissibleValues: List<Int>): Int {
-    try {
-        val message = readln()
-        val processedInput = processInputInt(message, permissibleValues)
-        GameView.log("Input processed successfully: $processedInput")
-        return processedInput
-    } catch (e: InvalidStateException) {
-        GameView.log("InvalidLengthException occurred: ${e.message}")
-        // Тут нужно придумать, как в случае, если воод не правильный, но время ещё есть
-        // нам нужно ожидать следующего ввода пользователя
+    fun readString(): String {
+        try {
+            val message = readln()
+            val processedInput = GameView.processMessageString(message)
+            GameView.log("Input processed successfully: $processedInput")
+            GameView.sendMessageToAllAlive(processedInput)
+        } catch (e: InvalidLengthException) {
+            GameView.log("InvalidLengthException occurred: ${e.message}")
+        } catch (e: InvalidCharException) {
+            GameView.log("InvalidCharException occurred: ${e.message}")
+        }
+        GameView.sendMessageToPlayer("Invalid input, please try again")
+        return readString()
     }
-    GameView.sendMessageToPlayer("Invalid input, please try again")
-    return readInt(permissibleValues)
+
+
+    fun readBoolean(): Boolean {
+        try {
+            val message = readln()
+            val processedInput = GameView.processMessageBoolean(message)
+            GameView.log("Input processed successfully: $processedInput")
+            return processedInput.toBoolean()
+        } catch (e: InvalidStateException) {
+            GameView.log("InvalidLengthException occurred: ${e.message}")
+            // Тут нужно придумать, как в случае, если воод не правильный, но время ещё есть
+            // нам нужно ожидать следующего ввода пользователя
+        }
+        GameView.sendMessageToPlayer("Invalid input, please try again")
+        return readBoolean()
+    }
+
+
+    fun readInt(permissibleValues: List<Int>): Int {
+        try {
+            val message = readln()
+            val processedInput = GameView.processMessageInt(message, permissibleValues)
+            GameView.log("Input processed successfully: $processedInput")
+            return processedInput
+        } catch (e: InvalidStateException) {
+            GameView.log("InvalidLengthException occurred: ${e.message}")
+            // Тут нужно придумать, как в случае, если воод не правильный, но время ещё есть
+            // нам нужно ожидать следующего ввода пользователя
+        }
+        GameView.sendMessageToPlayer("Invalid input, please try again")
+        return readInt(permissibleValues)
+    }
 }
