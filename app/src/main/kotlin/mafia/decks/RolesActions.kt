@@ -1,9 +1,9 @@
 package mafia.decks
 
 import mafia.models.DeckSettings
-import mafia.users.Player
+import mafia.users.User
 
-fun kill(player: Player) {
-    DeckSettings.removePlayer(player)
-    player.toKilledState()
+fun kill(user: User) {
+    DeckSettings.removePlayer(user)
+    user.toKilledState()
 }

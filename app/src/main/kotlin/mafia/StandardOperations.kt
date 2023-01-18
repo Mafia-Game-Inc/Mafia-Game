@@ -46,7 +46,7 @@ fun checkRules(): Boolean {
     return true
 }
 
-fun killAction(player: Player) {
-    kill(player)
+fun killAction(user: DeprecatedUsers) {
+    kill(user)
     println()
 }

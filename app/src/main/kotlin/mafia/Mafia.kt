@@ -1,13 +1,12 @@
 package mafia
 
-import mafia.day.DayCreator
 import mafia.decks.*
 import mafia.decks.classic.*
 import mafia.decks.enams.DeckTypes
-import mafia.day.DayService
-import mafia.day.DayTypes
-import mafia.day.defaultDay.DefaultDayService
-import mafia.decks.DeckService
+import mafia.day.*
+import mafia.day.defaultDay.*
+import mafia.models.*
+import mafia.users.*
 
 class Mafia(deckType: DeckTypes, dayType: DayTypes): RunnableService {
     private var deckService: DeckService = ClassicDeckService()
@@ -16,6 +15,10 @@ class Mafia(deckType: DeckTypes, dayType: DayTypes): RunnableService {
     init {
         deckService = DeckCreator.createDeck(deckType)
         dayService = DayCreator.createDay(dayType)
+    }
+
+    fun addPlayer(user: User) {
+        Lobby.addUser(user)
     }
 
     override fun run() {

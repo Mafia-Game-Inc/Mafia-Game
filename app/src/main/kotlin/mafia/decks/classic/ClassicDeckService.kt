@@ -7,10 +7,10 @@ class ClassicDeckService: DeckService {
     override val deckConfigurator = ClassicConfiguratorService()
 
     override fun configureDeckSettings() {
-        TODO("Not yet implemented")
+        deckConfigurator.configure()
     }
 
     override fun runNight() {
-        TODO("Not yet implemented")
+        nightRunner.run()
     }
 }

@@ -2,7 +2,7 @@ package mafia.models
 
 import exceptions.InvalidInputArgumentException
 import mafia.decks.enams.Teams
-import mafia.users.Player
+import mafia.users.User
 
 object DeckSettings {
     var playersAmount = -1
@@ -11,13 +11,13 @@ object DeckSettings {
     var blackPlayers = -1
     var activeRoles = listOf<RoleData>()
 
-    fun removePlayer(player: Player) {
-        when(player.team) {
+    fun removePlayer(user: User) {
+        when(user.team) {
             Teams.RED -> redPlayers--
             Teams.BLACK -> blackPlayers--
             Teams.NONE ->
                 throw InvalidInputArgumentException(
-                    "player ${player.id} has not initialized team property"
+                    "player ${user.id} has not initialized team property"
                 )
         }
     }

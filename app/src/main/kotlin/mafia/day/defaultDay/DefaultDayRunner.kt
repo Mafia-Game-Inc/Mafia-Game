@@ -6,7 +6,7 @@ import mafia.models.*
 import mafia.users.*
 
 class DefaultDayRunner: RunnableService {
-    private val exposedPlayers = mutableListOf<Player>()
+    private val exposedUsers = mutableListOf<DeprecatedUsers>()
     private var alivePositionsList = mutableListOf<Int>()
     private var votes = mutableListOf<Int>()
 
@@ -31,21 +31,21 @@ class DefaultDayRunner: RunnableService {
                 if (chosenPos == 0) continue
 
                 val exposedPlayer = Lobby.players.find { it.position == chosenPos }!!
-                exposedPlayers.add(exposedPlayer)
+                exposedUsers.add(exposedPlayer)
                 alivePositionsList.remove(chosenPos)
             }
         }
     }
 
     private fun defenceLoop() {
-        for (player in exposedPlayers) {
+        for (player in exposedUsers) {
             player.say(DaySettings.timeForDefence)
         }
     }
 
     private fun votingLoop() {
-        for (exposed in exposedPlayers) {
-            if (exposed === exposedPlayers.last()) {
+        for (exposed in exposedUsers) {
+            if (exposed === exposedUsers.last()) {
                 val nonVoted = Lobby.players.count { !it.isVoted }
                 votes[exposed.position - 1] = nonVoted
             }
@@ -68,7 +68,7 @@ class DefaultDayRunner: RunnableService {
     }
 
     private fun toStartingState() {
-        exposedPlayers.clear()
+        exposedUsers.clear()
         alivePositionsList.clear()
         votes.clear()
         Lobby.players.onEach { it.isVoted = false }
