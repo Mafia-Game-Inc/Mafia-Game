@@ -1,5 +1,5 @@
 package mafia.decks.enams
 
 enum class Roles {
-    GODFATHER, SHERIFF, CITIZEN, MAFIA, NONE
+    GODFATHER, SHERIFF, CITIZEN, MAFIA, NONE, DOCTOR
 }
