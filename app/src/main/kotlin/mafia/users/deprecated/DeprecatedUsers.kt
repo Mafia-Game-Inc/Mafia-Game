@@ -1,4 +1,6 @@
 package mafia.users.deprecated
+/*
+package mafia.users.deprecated
 
 import exceptions.*
 import mafia.decks.enams.*
@@ -6,6 +8,7 @@ import mafia.models.Lobby
 import view.View
 import kotlin.random.*
 
+*/
 /*open class User {
     val id: UInt = Random.nextUInt()
     var nickName: String = "UserName"
@@ -28,7 +31,8 @@ import kotlin.random.*
 
         return View.readInt(availablePositions)
     }
-}*/
+}*//*
+
 
 class DeprecatedUsers {
     val id: UInt = Random.nextUInt()
@@ -164,6 +168,7 @@ class DeprecatedUsers {
     }
 }
 
+*/
 /*
 class Player(var nickname: String) {
     val id: UInt = Random.nextUInt()
@@ -294,3 +299,4 @@ class Player(var nickname: String) {
         return "Player(nickname='$nickname', id=$id, isHost=$isHost, position=$position, role=$role, team=$team, state=$state)"
     }
 }*/
+
