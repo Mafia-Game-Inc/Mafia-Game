@@ -7,10 +7,10 @@ class DefaultDayService: DayService {
     override val dayConfigurator = DefaultDayConfigurator()
 
     override fun runDay() {
-
+        dayRunner.run()
     }
 
     override fun configureDaySetting() {
-
+        dayConfigurator.configure()
     }
 }

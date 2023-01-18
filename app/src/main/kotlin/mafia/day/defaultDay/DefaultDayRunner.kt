@@ -6,7 +6,7 @@ import mafia.models.*
 import mafia.users.*
 
 class DefaultDayRunner: RunnableService {
-    private val exposedUsers = mutableListOf<DeprecatedUsers>()
+    private val exposedUsers = mutableListOf<User>()
     private var alivePositionsList = mutableListOf<Int>()
     private var votes = mutableListOf<Int>()
 
@@ -24,13 +24,13 @@ class DefaultDayRunner: RunnableService {
 
     private fun speechAndExposingLoop() {
         for (player in Lobby.players) {
-            if (player.state == PlayerState.ALIVE) {
-                player.say(DaySettings.timeForSpeech)
+            if (player.value.gameState == UserGameStates.ALIVE) {
+                player.value.say(DaySettings.timeForSpeech)
 
-                val chosenPos = player.expose(alivePositionsList)
+                val chosenPos = player.value.expose(alivePositionsList)
                 if (chosenPos == 0) continue
 
-                val exposedPlayer = Lobby.players.find { it.position == chosenPos }!!
+                val exposedPlayer = Lobby.players[chosenPos]!!
                 exposedUsers.add(exposedPlayer)
                 alivePositionsList.remove(chosenPos)
             }
@@ -46,13 +46,16 @@ class DefaultDayRunner: RunnableService {
     private fun votingLoop() {
         for (exposed in exposedUsers) {
             if (exposed === exposedUsers.last()) {
-                val nonVoted = Lobby.players.count { !it.isVoted }
+                val nonVoted = Lobby.players.count { !it.value.isVoted }
                 votes[exposed.position - 1] = nonVoted
             }
 
             for (player in Lobby.players) {
-                if (player.state == PlayerState.ALIVE && player != exposed && !player.isVoted) {
-                    if (player.vote(exposed.position)) votes[exposed.position - 1]++
+                if (
+                    player.value.gameState == UserGameStates.ALIVE
+                    && player.value != exposed && !player.value.isVoted
+                ) {
+                    if (player.value.vote(exposed.position)) votes[exposed.position - 1]++
                 }
             }
         }
@@ -60,9 +63,7 @@ class DefaultDayRunner: RunnableService {
 
     private fun determineAndHangPlayer() {
         val positionToKill = votes.indexOf(votes.maxOrNull()) + 1
-        val playerToKill = Lobby.players.find {
-            it.position == positionToKill
-        }!!
+        val playerToKill = Lobby.players[positionToKill]!!
 
         hangPlayer(playerToKill)
     }
@@ -71,6 +72,6 @@ class DefaultDayRunner: RunnableService {
         exposedUsers.clear()
         alivePositionsList.clear()
         votes.clear()
-        Lobby.players.onEach { it.isVoted = false }
+        Lobby.players.onEach { it.value.isVoted = false }
     }
 }
