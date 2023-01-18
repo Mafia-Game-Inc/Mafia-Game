@@ -6,7 +6,7 @@ import game.mafia.users.UserStates
 
 object GameView {
     private const val MaxInputLength = 100
-    const val forbiddenCharacters = "!@#$%^&*()"
+    private const val forbiddenCharacters = "!@#$%^&*()"
     private val players = mutableListOf<Player>()
 
     private fun hasForbiddenCharacters(input: String, forbidden: String): Boolean {
@@ -101,8 +101,8 @@ object GameView {
             val processedInput = GameView.processMessageBoolean(message)
             GameView.log("Input processed successfully: $processedInput")
             return processedInput.toBoolean()
-        } catch (e: InvalidStateException) {
-            GameView.log("InvalidLengthException occurred: ${e.message}")
+        } catch (e: InvalidCharException) {
+            GameView.log("InvalidCharException occurred: ${e.message}")
             // Тут нужно придумать, как в случае, если воод не правильный, но время ещё есть
             // нам нужно ожидать следующего ввода пользователя
         }
