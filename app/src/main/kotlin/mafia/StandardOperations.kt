@@ -12,8 +12,7 @@ fun giveRoles() {
     val iterator = randomPositions.listIterator()
 
     Lobby.players.onEach {
-        it.role = Roles.CITIZEN
-        it.team = Teams.RED
+        it.value.toAliveState(Roles.CITIZEN, Teams.RED)
     }
 
     //assigning roles to random players
@@ -21,12 +20,7 @@ fun giveRoles() {
         for (i in 1..roleData.amount) {
             val playerPos = iterator.next()
 
-            Lobby.players
-                .find { it.position == playerPos }!!
-                .let {
-                    it.team = roleData.team
-                    it.role = roleData.role
-                }
+            Lobby.players[playerPos]!!.toAliveState(roleData.role, roleData.team)
         }
     }
 }
@@ -46,7 +40,7 @@ fun checkRules(): Boolean {
     return true
 }
 
-fun killAction(user: DeprecatedUsers) {
+fun killAction(user: User) {
     kill(user)
     println()
 }
