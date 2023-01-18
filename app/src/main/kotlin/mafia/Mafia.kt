@@ -8,7 +8,10 @@ import mafia.day.defaultDay.*
 import mafia.models.*
 import mafia.users.*
 
-class Mafia(deckType: DeckTypes, dayType: DayTypes): RunnableService {
+class Mafia(
+    deckType: DeckTypes = DeckTypes.CLASSIC,
+    dayType: DayTypes = DayTypes.DEFAULT
+) : RunnableService {
     private var deckService: DeckService = ClassicDeckService()
     private var dayService: DayService = DefaultDayService()
 
