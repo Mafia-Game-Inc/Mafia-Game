@@ -81,6 +81,15 @@ class User {
         return chosenPlayerPos
     }
 
+    // for future refactoring
+    fun chooseFrom(availableChoices: List<Int>): Int {
+        View.sendMessage(
+            "Please choose position from below list:\n$availableChoices"
+        )
+
+        return View.readInt(availableChoices)
+    }
+
 
     fun toInMenuState() {
         position = -1
@@ -129,5 +138,11 @@ class User {
     }
 
 
-    private fun choosePosition(availablePosition: List<Int>) {}
+    private fun choosePosition(availablePosition: List<Int>) {
+        View.sendMessage(
+            "Please choose position from below list:\n$availablePosition"
+        )
+
+        position = View.readInt(availablePosition)
+    }
 }
