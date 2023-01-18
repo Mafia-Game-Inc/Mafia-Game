@@ -1,5 +1,6 @@
 package mafia.models
 
+import mafia.decks.enams.*
 import mafia.users.*
 import view.View
 import java.util.*
@@ -49,5 +50,17 @@ object Lobby {
         }
 
         return positions
+    }
+
+    fun getActivePlayers(): Map<Roles, User> {
+        val activePlayers = mutableMapOf<Roles, User>()
+
+        for (player in players) {
+            if (player.value.role != Roles.CITIZEN) {
+                activePlayers[player.value.role] = player.value
+            }
+        }
+
+        return activePlayers
     }
 }
