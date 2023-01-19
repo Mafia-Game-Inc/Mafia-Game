@@ -4,34 +4,29 @@ import game.mafia.users.Player
 import game.mafia.roles.Roles
 
 class Controller {
-    private var playersMap: <int, Player> = players.associateBy { it.position }
+    private var playersMap: Map<Int, Player> = players.associateBy { it.position }
     private var nightActions: NightActions = NightActions()
-    private lateinit var currentPhase: GamePhase
-    private lateinit var voteTracker: VoteTracker
+    private var currentPhase: GamePhase = GamePhase.DAY
+    private var voteTracker: VoteTracker = VoteTracker()
 
     fun handleInput(player: Player, input: String) {
         when (currentPhase) {
             GamePhase.NIGHT -> handleNightInput(player, input)
             GamePhase.DAY -> handleDayInput(player, input)
-            GamePhase.END -> handleEndInput(player, input)
+//          GamePhase.END -> handleEndInput(player, input)
         }
     }
-
-    // methods for handling input during specific phases
     private fun handleNightInput(player: Player, input: String) {
-        // process night action input and update game state accordingly
         nightActions.processAction(player, input)
     }
 
     private fun handleDayInput(player: Player, input: String) {
-        // process vote input and update game state accordingly
         voteTracker.processVote(player, input)
     }
 
-    private fun handleEndInput(player: Player, input: String) {
-
-    }
-
+//    private fun handleEndInput(player: Player, input: String) {
+//
+//    }
     private fun checkForWin() {
     }
 }
@@ -61,13 +56,11 @@ class VoteTracker {
     }
 
     private fun lynchPlayer(targetPlayer: Player) {
-        // code for lynching a player
     }
 }
 class NightActions {
     private var actions: MutableMap<Player, Action> = mutableMapOf()
-
-    // method for processing night action input
+    private var playersMap: Map<Int, Player> = players.associateBy { it.position }
     fun processAction(player: Player, input: String) {
         val action = parseInput(player, input)
         if (action != null) {
@@ -75,44 +68,41 @@ class NightActions {
         }
     }
 
-    // method for executing night actions
     fun executeActions() {
         actions.forEach { (player, action) ->
-            when (action) {
-                is KillAction -> killPlayer(action.targetPlayer)
-                is InvestigateAction -> investigatePlayer(action.targetPlayer)
-                is SearchSheriffAction -> searchSheriff(action.targetPlayer)
-                is InvestigateMafiaAction -> investigateMafia(action.targetPlayer)
-            }
+            action.executeAction()
         }
-        actions.clear() // clear actions after they have been executed
+        actions.clear()
     }
 
-    // helper method for parsing input and returning an action object
     private fun parseInput(player: Player, input: String): Action? {
         val inputComponents = input.split(" ")
         val actionType = inputComponents[0]
-        val targetPlayer = inputComponents[1]
+        val targetPlayer = playersMap[inputComponents[1].toInt()]
+        if(actionType != null) {
+            return when (actionType) {
+                "kill" -> targetPlayer?.let { KillAction(it) }
+                "search_sheriff" -> {
+                    if (player.role == Roles.GODFATHER) {
+                        targetPlayer?.let { SearchSheriffAction(it) }
+                    } else {
+                        println("Invalid action for this player")
+                        null
+                    }
+                }
 
-        return when (actionType) {
-            "kill" -> KillAction(targetPlayer)
-            "investigate" -> InvestigateAction(targetPlayer)
-            "search_sheriff" -> {
-                if (player.role == Roles.GODFATHER) {
-                    SearchSheriffAction(targetPlayer)
-                } else {
-                    displayMessage("Invalid action for this player")
-                    null
+                "search_mafia" -> {
+                    if (player.role == Roles.SHERIFF) {
+                        targetPlayer?.let { SearchMafiaAction(it) }
+                    } else {
+                        println("Invalid action for this player")
+                        null
+                    }
                 }
+
+                else -> null
             }
-            "investigate_mafia" -> {
-                if (player.role == Roles.SHERIFF) {
-                    InvestigateMafiaAction(targetPlayer)
-                } else {
-                    displayMessage("Invalid action for this player")
-                    null
-                }
-            }
-            else -> null
         }
+        else return null
     }
+}
