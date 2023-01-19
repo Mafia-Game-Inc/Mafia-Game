@@ -72,7 +72,7 @@ class ClassicNightRunner: RunnableService {
             val mafiaChoice = View.readInt(availableChoices)
             val playerToKill = Lobby.players[mafiaChoice]!!
             if (playerToKill.team == Teams.RED || DeckSettings.blackPlayers > 1) {
-                kill(playerToKill)
+                killAction(playerToKill)
             }
         }
 

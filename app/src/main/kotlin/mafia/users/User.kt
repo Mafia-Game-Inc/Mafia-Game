@@ -80,15 +80,6 @@ class User {
         return chosenPlayerPos
     }
 
-    // for future refactoring
-    fun chooseFrom(availableChoices: List<Int>): Int {
-        View.sendMessage(
-            "Please choose position from below list:\n$availableChoices"
-        )
-
-        return View.readInt(availableChoices)
-    }
-
 
     fun toInMenuState() {
         position = -1
@@ -118,14 +109,14 @@ class User {
         lobbyState = UserLobbyStates.PLAYER
     }
 
-    fun mockToPlayerState(position: Int) {
-        this.position = position
-        isVoted = false
-        role = Roles.NONE
-        team = Teams.NONE
-        gameState = UserGameStates.NONE
-        lobbyState = UserLobbyStates.PLAYER
-    }
+//    fun mockToPlayerState(position: Int) {
+//        this.position = position
+//        isVoted = false
+//        role = Roles.NONE
+//        team = Teams.NONE
+//        gameState = UserGameStates.NONE
+//        lobbyState = UserLobbyStates.PLAYER
+//    }
 
     fun toAliveState(role: Roles, team: Teams) {
         if (this.lobbyState != UserLobbyStates.PLAYER) {

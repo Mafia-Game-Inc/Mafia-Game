@@ -1,7 +1,6 @@
 package mafia
 
 import mafia.decks.enams.*
-import mafia.decks.*
 import mafia.models.*
 import mafia.users.*
 
@@ -40,7 +39,7 @@ fun checkRules(): Boolean {
     return true
 }
 
-fun killAction(user: User) {
-    kill(user)
-    println()
+fun kill(user: User) {
+    DeckSettings.removePlayer(user)
+    user.toKilledState()
 }
