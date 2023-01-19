@@ -4,7 +4,7 @@ import game.mafia.roles.Roles
 import game.mafia.users.Player
 
 sealed class Action {
-    abstract val targetPlayer: Player?
+    abstract val targetPlayer: Player
     abstract fun executeAction ()
 }
 

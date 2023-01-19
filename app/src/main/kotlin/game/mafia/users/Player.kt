@@ -20,7 +20,7 @@ open class Player(var nickname: String) {
     var role: Roles = Roles.NONE
     var team: Teams = Teams.NONE
     var state: UserStates = UserStates.NOT_IN_GAME
-        private set
+
 
     //переместить метод в контроллер
     fun joinGame (gameId: UInt, games: MutableList<Mafia>) {

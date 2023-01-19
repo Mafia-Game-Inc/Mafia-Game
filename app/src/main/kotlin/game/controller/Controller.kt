@@ -2,6 +2,7 @@ package game.controller
 
 import game.mafia.users.Player
 import game.mafia.roles.Roles
+import game.mafia.users.UserStates
 
 class Controller {
     private var playersMap: Map<Int, Player> = players.associateBy { it.position }
@@ -32,34 +33,46 @@ class Controller {
 }
 class VoteTracker {
     private var votes: MutableMap<Player, Player> = mutableMapOf()
-
     fun processVote(voter: Player, input: String) {
-        val vote: Player? = parseInput(input)
+        val vote: Player? = parseInput(voter, input)
         if (vote != null) {
             votes[voter] = vote
         }
     }
-
-    fun countVotes() {
-        val voteCount = votes.values.groupBy { it }.mapValues { it.value.size }
-
-        //!!!Preferably it shouldn't be "maxBy", value should be returned only if it's max and single
-        val mostVotes = voteCount.maxBy { it.value }
-        if (mostVotes != null) {
-            val targetPlayer = mostVotes.key
-            val voteCount = mostVotes.value
-            if (voteCount > (votes.size / 2)) {
-                lynchPlayer(targetPlayer)
+    fun judge(votes: Map<Player, Player>) {
+        val voteCount = mutableMapOf<Player, Int>()
+        for (vote in votes.values) {
+            if (voteCount.containsKey(vote)) {
+                voteCount[vote] = voteCount[vote]!! + 1
+            } else {
+                voteCount[vote] = 1
             }
         }
-        votes.clear()
+        var maxVotes = 0
+        var maxPlayer: Player? = null
+        for (entry in voteCount) {
+            if (entry.value > maxVotes) {
+                maxVotes = entry.value
+                maxPlayer = entry.key
+            }
+        }
+        if (maxPlayer != null) {
+            lynchPlayer(maxPlayer)
+            voteCount.clear()
+        }
+        else println("No one was killed")
     }
-
+    private fun parseInput(voter:Player, input: String) : Player? {
+        TODO()
+    }
     private fun lynchPlayer(targetPlayer: Player) {
+        targetPlayer.state = UserStates.KILLED
     }
 }
+
 class NightActions {
     private var actions: MutableMap<Player, Action> = mutableMapOf()
+    private var votingMap: MutableMap<Player, Player> = mutableMapOf()
     private var playersMap: Map<Int, Player> = players.associateBy { it.position }
     fun processAction(player: Player, input: String) {
         val action = parseInput(player, input)
@@ -99,7 +112,6 @@ class NightActions {
                         null
                     }
                 }
-
                 else -> null
             }
         }

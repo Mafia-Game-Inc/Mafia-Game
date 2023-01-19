@@ -13,7 +13,7 @@ const val TIME_FOR_DEFENSE = 30u
 
 class Mafia(var gameName: String, presetType: String = "Classic") {
     val gameId: UInt = Random.nextUInt()
-    private val players = mutableListOf<Player>()
+    val players = mutableListOf<Player>()
     private var preset: Preset = Classic()
     var gameState: GameStates = GameStates.NOT_STARTED
         private set
