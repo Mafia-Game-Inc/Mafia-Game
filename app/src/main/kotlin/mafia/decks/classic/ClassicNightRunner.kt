@@ -39,12 +39,15 @@ class ClassicNightRunner: RunnableService {
         }*/
         val sheriff = activePlayers[Roles.SHERIFF]!!
         if (sheriff.gameState == UserGameStates.ALIVE) {
-            View.sendMessage("Hey, Sheriff, try to find mafia")
-
             val availableChoices = Lobby
                 .getAlivePlayersPositions()
                 .toMutableList()
             availableChoices.remove(sheriff.position)
+
+            View.sendMessage("Hey, Sheriff, try to find mafia")
+            View.sendMessage("Choose from:")
+            View.sendMessage("$availableChoices")
+
             val sheriffChoice = View.readInt(availableChoices)
 
             //add null check
@@ -60,9 +63,13 @@ class ClassicNightRunner: RunnableService {
             .filterValues { it.team == Teams.BLACK && it.gameState == UserGameStates.ALIVE }
             .toList()
         if (aliveMafias.isNotEmpty()) {
-            View.sendMessage("Now it is time to kill")
+            val availableChoices = Lobby.getAlivePlayersPositions()
 
-            val mafiaChoice = View.readInt(Lobby.getAlivePlayersPositions())
+            View.sendMessage("Now it is time to kill")
+            View.sendMessage("Choose from:")
+            View.sendMessage("$availableChoices")
+
+            val mafiaChoice = View.readInt(availableChoices)
             val playerToKill = Lobby.players[mafiaChoice]!!
             if (playerToKill.team == Teams.RED || DeckSettings.blackPlayers > 1) {
                 kill(playerToKill)
@@ -71,12 +78,19 @@ class ClassicNightRunner: RunnableService {
 
         val godFather = activePlayers[Roles.GODFATHER]!!
         if (godFather.gameState == UserGameStates.ALIVE) {
-            View.sendMessage("Hey, Don, try to find Sheriff")
-
             val availableChoices = Lobby
                 .getAlivePlayersPositions()
                 .toMutableList()
-            availableChoices.remove(godFather.position)
+            availableChoices.removeAll(
+                activePlayers
+                    .filter { it.value.team == Teams.BLACK }
+                    .flatMap { listOf(it.value.position) }
+            )
+
+            View.sendMessage("Hey, Don, try to find Sheriff")
+            View.sendMessage("Choose from:")
+            View.sendMessage("$availableChoices")
+
             val godfatherChoice = View.readInt(availableChoices)
 
             //add null check

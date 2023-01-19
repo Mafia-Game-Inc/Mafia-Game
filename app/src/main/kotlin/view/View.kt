@@ -18,7 +18,7 @@ object View {
             log("Input processed successfully: $input")
             return input.toBoolean()
         } catch (e: InvalidUserInputException) {
-            log("InvalidLengthException occurred: ${e.message}")
+            log("InvalidUserInputException occurred: ${e.message}")
         }
         sendMessage("Invalid input, please try again")
         return readBoolean()
@@ -31,7 +31,7 @@ object View {
             log("Input processed successfully: $input")
             return input.toInt()
         } catch (e: InvalidUserInputException) {
-            log("InvalidLengthException occurred: ${e.message}")
+            log("InvalidUserInputException occurred: ${e.message}")
         }
         sendMessage("Invalid input, please try again")
         return readInt(permissibleValues)

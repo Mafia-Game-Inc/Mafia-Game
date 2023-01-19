@@ -3,6 +3,7 @@ package mafia.users
 import exceptions.*
 import mafia.decks.enams.*
 import view.View
+import java.text.FieldPosition
 import kotlin.random.*
 
 /*
@@ -21,6 +22,7 @@ enum class UserLobbyStates {
 class User {
     val id: UInt = Random.nextUInt()
     var position: Int = -1
+        private set
     var isHost: Boolean = false
     var isVoted: Boolean = false
     var role: Roles = Roles.NONE
@@ -67,12 +69,9 @@ class User {
         }
 
         View.log("player number $position is exposing...")
-        alivePlayersPos.add(0)
         View.sendMessage("choose player from below or enter 0\n$alivePlayersPos")
 
-
         val chosenPlayerPos = View.readInt(alivePlayersPos)
-        if (chosenPlayerPos == 0) return 0
 
         if (chosenPlayerPos == this.position) {
             throw InvalidInputArgumentException("Invalid chosen position: player can't expose itself")
@@ -119,6 +118,15 @@ class User {
         lobbyState = UserLobbyStates.PLAYER
     }
 
+    fun mockToPlayerState(position: Int) {
+        this.position = position
+        isVoted = false
+        role = Roles.NONE
+        team = Teams.NONE
+        gameState = UserGameStates.NONE
+        lobbyState = UserLobbyStates.PLAYER
+    }
+
     fun toAliveState(role: Roles, team: Teams) {
         if (this.lobbyState != UserLobbyStates.PLAYER) {
             throw InvalidStateException("Invalid sate: to became alive user must be player")
@@ -144,5 +152,18 @@ class User {
         )
 
         position = View.readInt(availablePosition)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 }

@@ -23,6 +23,7 @@ class DefaultDayRunner: RunnableService {
     }
 
     private fun speechAndExposingLoop() {
+        alivePositionsList.add(0)
         for (player in Lobby.players) {
             if (player.value.gameState == UserGameStates.ALIVE) {
                 player.value.say(DaySettings.timeForSpeech)
@@ -35,6 +36,7 @@ class DefaultDayRunner: RunnableService {
                 alivePositionsList.remove(chosenPos)
             }
         }
+        alivePositionsList.removeLast()
     }
 
     private fun defenceLoop() {
@@ -45,9 +47,10 @@ class DefaultDayRunner: RunnableService {
 
     private fun votingLoop() {
         for (exposed in exposedUsers) {
-            if (exposed === exposedUsers.last()) {
+            if (exposed == exposedUsers.last()) {
                 val nonVoted = Lobby.players.count { !it.value.isVoted }
                 votes[exposed.position - 1] = nonVoted
+                continue
             }
 
             for (player in Lobby.players) {

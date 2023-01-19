@@ -17,13 +17,13 @@ class UrbanConfiguratorService: ConfiguratorService {
     )
 
     override fun configure() {
-        val playersAmount = Lobby.players.size
+        val playersAmount = DeckSettings.playersAmount
 
         if (playersAmount < minPlayersAmount) {
             throw InvalidStateException("Invalid game state: there is not enough players in lobby")
         }
 
-        DeckSettings.playersAmount = playersAmount
+//        DeckSettings.playersAmount = playersAmount
         DeckSettings.blackPlayers =
             playersAmount / coefForCalcBlackPlayers
         DeckSettings.redPlayers =

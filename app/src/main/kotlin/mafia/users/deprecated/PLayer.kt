@@ -4,7 +4,7 @@ import exceptions.*
 import mafia.decks.enams.*
 import view.View
 
-class Player(val position: Int): Spectator()  {
+/*class Player(val position: Int): Spectator()  {
     var isVoted: Boolean = false
     var role: Roles = Roles.NONE
         private set
@@ -77,4 +77,4 @@ class Player(val position: Int): Spectator()  {
     fun toKilledState() {
         state = PlayerState.KILLED
     }
-}
+}*/

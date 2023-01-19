@@ -1,31 +1,23 @@
-import mafia.models.DeckSettings
-import kotlin.random.Random
-
-open class User {
-    val id: UInt = Random.nextUInt()
-    var nickName: String = "UserName"
-
-    fun becameSpectator(): Spectator {
-        return Spectator()
-    }
-
-    fun becamePlayer(): Player {
-        val position = choosePosition()
-        return Player(position)
-    }
-
-    private fun choosePosition(): Int {
-        val availablePositions = Lobby.getUnoccupiedPositions()
-
-        View.sendMessage(
-            "Please choose position from below list:\n$availablePositions"
-        )
-
-        return View.readInt(availablePositions)
-    }
-}
+import controller.Controller
+import mafia.Mafia
+import mafia.models.Lobby
+import mafia.users.User
 
 fun main() {
-    val i: Int? = null
-    i?.minus(1) ?: throw IllegalArgumentException("")
+    val testMafia = Mafia()
+    val testUsers = MutableList(10) { User() }
+
+    for (player in testUsers) {
+        Controller.addPlayer(player)
+    }
+
+    Controller.play()
+//    var i = 1
+//    for (user in testUsers) {
+//        user.mockToPlayerState(i)
+//        Lobby.players[user.position] = user
+//        i++
+//    }
+//
+//    testMafia.run()
 }

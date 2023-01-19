@@ -7,10 +7,12 @@ import mafia.day.*
 import mafia.day.defaultDay.*
 import mafia.models.*
 import mafia.users.*
+import view.View
 
 class Mafia(
     deckType: DeckTypes = DeckTypes.CLASSIC,
-    dayType: DayTypes = DayTypes.DEFAULT
+    dayType: DayTypes = DayTypes.DEFAULT,
+    playersAmount: Int = 10
 ) : RunnableService {
     private var deckService: DeckService = ClassicDeckService()
     private var dayService: DayService = DefaultDayService()
@@ -18,6 +20,7 @@ class Mafia(
     init {
         deckService = DeckCreator.createDeck(deckType)
         dayService = DayCreator.createDay(dayType)
+        DeckSettings.playersAmount = playersAmount
     }
 
     fun addPlayer(user: User) {
@@ -31,10 +34,11 @@ class Mafia(
         giveRoles()
         while (checkRules()) {
             dayService.runDay()
-            if (checkRules()) break
+            if (!checkRules()) break
             deckService.runNight()
         }
 
-        determineWinner()
+        val winner = determineWinner()
+        View.sendMessage("${winner.name} team won!")
     }
 }

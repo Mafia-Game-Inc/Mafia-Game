@@ -16,6 +16,8 @@ object Lobby {
             View.sendMessage("you already in this game")
         }
 
+        //ask user if he wants to be a player
+
         if (players.size >= DeckSettings.playersAmount) {
             user.toSpectatorState()
             spectators.add(user)
@@ -44,9 +46,7 @@ object Lobby {
         val positions = (1..maxPosition).toMutableList()
 
         for (player in players) {
-            if (player.value.gameState == UserGameStates.ALIVE) {
-                positions.remove(player.value.position)
-            }
+            positions.remove(player.value.position)
         }
 
         return positions
