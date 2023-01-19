@@ -19,10 +19,14 @@ class Controller {
     }
     private fun handleNightInput(player: Player, input: String) {
         nightActions.processAction(player, input)
+        nightActions.executeActions()
+        currentPhase = currentPhase.nextPhase()
     }
 
     private fun handleDayInput(player: Player, input: String) {
         voteTracker.processVote(player, input)
+        voteTracker.judge(voteTracker.votes)
+        currentPhase = currentPhase.nextPhase()
     }
 
 //    private fun handleEndInput(player: Player, input: String) {
@@ -32,7 +36,7 @@ class Controller {
     }
 }
 class VoteTracker {
-    private var votes: MutableMap<Player, Player> = mutableMapOf()
+    var votes: MutableMap<Player, Player> = mutableMapOf()
     fun processVote(voter: Player, input: String) {
         val vote: Player? = parseInput(voter, input)
         if (vote != null) {
@@ -58,7 +62,6 @@ class VoteTracker {
         }
         if (maxPlayer != null) {
             lynchPlayer(maxPlayer)
-            voteCount.clear()
         }
         else println("No one was killed")
     }
@@ -67,6 +70,7 @@ class VoteTracker {
     }
     private fun lynchPlayer(targetPlayer: Player) {
         targetPlayer.state = UserStates.KILLED
+        votes.clear()
     }
 }
 
